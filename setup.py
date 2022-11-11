@@ -38,7 +38,7 @@ setup(
     # package_dir = {"": "src"}
     # packages=find_packages("Ensemble_GNN/*", exclude=["test"]),
     # py_modules=["xyz"],
-    packages=['pyrea'],
+    packages=['ensemble_gnn'],
     install_requires=[
         'pandas>0.20.0',
         'numpy>1.0.0',

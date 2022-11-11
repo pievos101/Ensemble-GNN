@@ -1,0 +1,34 @@
+Metadata-Version: 2.1
+Name: ensemble-gnn
+Version: 1.0.0
+Summary: Ensemble learning with graph neural networks
+Home-page: https://github.com/pievos101/Ensemble_GNN
+Author: Bastian Pfeifer
+Author-email: bastian.pfeifer@medunigraz.at
+License: MIT
+Keywords: graph neural networks,ensemble learning
+Platform: UNKNOWN
+Classifier: Development Status :: 1 - Planning
+Classifier: Intended Audience :: Science/Research
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3 :: Only
+Classifier: Topic :: Software Development
+Classifier: Topic :: Scientific/Engineering
+Classifier: Operating System :: Microsoft :: Windows
+Classifier: Operating System :: POSIX :: Linux
+Classifier: Operating System :: MacOS
+Requires-Python: >=3.6
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
+# Ensemble-GNN: ensemble learning with graph neural networks
+
+
