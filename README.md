@@ -45,11 +45,13 @@ import ensemble_gnn as egnn
 # init
 e1 = egnn.ensemble(1)
 
+# add the GNN model to the ensemble
 e1.add(g)
 e1.add(g)
 
 e1.ensemble
 
+# train each model of the ensemble
 e1.train()
 e1.train_accuracy
 
