@@ -6,11 +6,11 @@ class ensemble(object):
     def __init__(self, id) -> None:
 
         self.id = id
-        self.ensemble  = None #this is a list
+        self.ensemble  = list()
         self.train_data = None
         self.test_data  = None
         self.target = None
-        self.train_accuracy = None
+        self.train_accuracy = list()
         self.test_accuracy = None
 
 
@@ -24,8 +24,8 @@ class ensemble(object):
         acc = list()
 
         for xx in range(len(self.ensemble)):
-            res = self.gnnsubnet[xx].train()
-            acc = acc.append(res.accuracy)           
+            self.ensemble[xx].train()
+            acc.append(self.ensemble[xx].accuracy)           
 
         self.train_accuracy = acc
                 

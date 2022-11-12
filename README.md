@@ -24,3 +24,34 @@ To install Ensemble-GNN from source code run:
 pip install Ensemble-GNN
 ```
 ## Usage
+
+```python
+from GNNSubNet import GNNSubNet as gnn
+
+# Synthetic data set  ------------------------- #
+loc   = "/home/bastian/GitHub/GNN-SubNet/GNNSubNet/datasets/synthetic"
+ppi   = f'{loc}/NETWORK_synthetic.txt'
+feats = [f'{loc}/FEATURES_synthetic.txt']
+targ  = f'{loc}/TARGET_synthetic.txt'
+
+# Read in the synthetic data
+g = gnn.GNNSubNet(loc, ppi, feats, targ, normalize=False)
+
+# Get some general information about the data dimension
+g.summary()
+
+import ensemble_gnn as egnn
+
+# init
+e1 = egnn.ensemble(1)
+
+e1.add(g)
+e1.add(g)
+
+e1.ensemble
+
+e1.train()
+
+
+```
+
