@@ -51,7 +51,7 @@ e1.add(g)
 e1.ensemble
 
 e1.train()
-
+e1.train_accuracy
 
 ```
 
