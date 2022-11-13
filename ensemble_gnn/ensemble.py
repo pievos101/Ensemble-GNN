@@ -100,6 +100,7 @@ class ensemble(object):
                             y=data_c.y))
 
             self.ensemble[xx].dataset = graphs
+            self.ensemble[xx].gene_names = self.gene_names[mod_sub]
             self.modules_gene_names.append(self.gene_names[mod_sub])
 
     def add(self, gnnsubnet):

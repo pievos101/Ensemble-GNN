@@ -92,14 +92,15 @@ class ensemble(object):
                     i += 1
                 e1_final = np.array(res).flatten()
                 
-                print(e0_final)
-                print(e1_final)
+                #print(e0_final)
+                #print(e1_final)
 
                 graphs.append(Data(x=torch.tensor(x_sub).float(),
                 edge_index=torch.tensor([e0_final,e1_final], dtype=torch.long),
                             y=data_c.y))
 
             self.ensemble[xx].dataset = graphs
+            self.ensemble[xx].gene_names = self.gene_names[mod_sub]
             self.modules_gene_names.append(self.gene_names[mod_sub])
 
     def add(self, gnnsubnet):

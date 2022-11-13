@@ -34,21 +34,32 @@ ppi   = f'{loc}/NETWORK_synthetic.txt'
 feats = [f'{loc}/FEATURES_synthetic.txt']
 targ  = f'{loc}/TARGET_synthetic.txt'
 
-# Read in the synthetic data
+# Read in the synthetic data and build a gnnsubnet object
 g = gnn.GNNSubNet(loc, ppi, feats, targ, normalize=False)
 
 # Get some general information about the data dimension
 g.summary()
 
+# import ensemble_gnn
 import ensemble_gnn as egnn
 
-# init: infer subnetworks and build ensemble
+# initialization: infer subnetworks and build ensemble
 e1 = egnn.ensemble(g)
+
+# length of ensemble
+len(e1.ensemble)
 
 # train each model of the ensemble
 e1.train()
+
 # accuracy for each module
 e1.train_accuracy
+
+# the nodes of each ensemble member can be accessed via
+e1.modules_gene_names 
+
+# The first subnetwork used within the ensemble can be obtained from
+e1.ensemble[0].dataset[0].edge_index
 
 ```
 
