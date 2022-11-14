@@ -44,7 +44,7 @@ g.summary()
 import ensemble_gnn as egnn
 
 # initialization: infer subnetworks and build ensemble
-e1 = egnn.ensemble(g)
+e1 = egnn.ensemble(g, niter=1)
 
 # length of ensemble
 len(e1.ensemble)
@@ -60,6 +60,18 @@ e1.modules_gene_names
 
 # The first subnetwork used within the ensemble can be obtained from
 e1.ensemble[0].dataset[0].edge_index
+
+# grow the ensemble 
+e1.grow(20)
+
+# check the accuracy
+e1.train_accuracy
+
+# train again with a different train-validation split
+e1.train()
+
+# check the accuracy
+e1.train_accuracy
 
 ```
 
