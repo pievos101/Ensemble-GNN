@@ -44,7 +44,7 @@ g.summary()
 import ensemble_gnn as egnn
 
 # initialization: infer subnetworks and build ensemble
-e1 = egnn.ensemble(g, niter=1)
+e1 = egnn.ensemble(g, niter=1) # niter=10 is recommended
 
 # length of ensemble
 len(e1.ensemble)
@@ -62,7 +62,7 @@ e1.modules_gene_names
 e1.ensemble[0].dataset[0].edge_index
 
 # grow the ensemble 
-e1.grow(20)
+e1.grow(10)
 
 # check the accuracy
 e1.train_accuracy
@@ -72,6 +72,23 @@ e1.train()
 
 # check the accuracy
 e1.train_accuracy
+
+# create a test set
+g_test = gnn.GNNSubNet(loc, ppi, feats, targ, normalize=False)
+
+# predict
+e1.predict(g_test)
+
+# predictions and accuracy for each subnetwork
+# accuracy o the test set
+e1.accuracy_test
+# predictions on the test set
+e1.predictions_test 
+# true class labels of the test set
+e1.true_class_test 
+
+# the overall predictions based on the whole ensemble using majority vote
+e1.predictions_test_mv
 
 ```
 
