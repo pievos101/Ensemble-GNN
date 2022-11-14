@@ -1,4 +1,4 @@
-# Ensemble-GNN: ensemble learning with graph neural networks
+# Ensemble-GNN: ensemble learning with graph neural networks for disease subnetwork discovery
 
 ## Installation
 
