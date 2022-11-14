@@ -49,7 +49,7 @@ e1 = egnn.ensemble(g, niter=1) # niter=10 is recommended
 # length of ensemble
 len(e1.ensemble)
 
-# train each model of the ensemble
+# train an gnn model on each subnetwork of the ensemble
 e1.train()
 
 # accuracy for each module
