@@ -1,13 +1,14 @@
 from torch_geometric.data.data import Data
 import torch
 from copy import copy
+import numpy as np
 
 class ensemble(object):
     """
     The class ensemble represents the main user API for the
     Ensemble_GNN package.
     """
-    def __init__(self, gnnsubnet) -> None:
+    def __init__(self, gnnsubnet, niter=1) -> None:
 
         self.id = None
         self.ensemble  = list()
@@ -26,7 +27,7 @@ class ensemble(object):
         gnnsubnet.train()
 
         # explainer
-        gnnsubnet.explain(1)
+        gnnsubnet.explain(niter)
 
         # get subnets and build ensemble classifier
         self.modules = gnnsubnet.modules
@@ -103,6 +104,7 @@ class ensemble(object):
             self.ensemble[xx].gene_names = self.gene_names[mod_sub]
             self.modules_gene_names.append(self.gene_names[mod_sub])
 
+
     def add(self, gnnsubnet):
 
         self.gnnsubnet = self.ensemble.append(gnnsubnet)
@@ -117,5 +119,22 @@ class ensemble(object):
             acc.append(self.ensemble[xx].accuracy)           
 
         self.train_accuracy = acc
-                
+             
+    def grow(self, size=10):
+
+        values = np.array(self.train_accuracy)
+        ens  = list()
+        acc  = list()
+        p    = (values - values.min()) / (values - values.min()).sum()
+        samp = np.random.multinomial(size, p , size=1)
+        samp = samp[0]
+
+        for xx in range(len(samp)):
+            times = samp[xx]
+            for yy in range(times):
+                ens.append(copy(self.ensemble[xx]))
+                acc.append(self.ensemble[xx].accuracy)
+        self.ensemble = ens
+        self.train_accuracy = acc
+
     #def predict(self):
