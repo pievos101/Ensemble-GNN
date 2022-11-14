@@ -42,12 +42,15 @@ class ensemble(object):
         # build the ensemble from these modules
         ## split the data sets
         for xx in range(len(self.modules)):
+            print(f'Ensemble:: {xx+1} of {len(self.modules)}')
             graphs=[]
             self.ensemble.append(copy(gnnsubnet))
             #print(len(self.ensemble))
             mod_sub = gnnsubnet.modules[xx]
             # now cut data to module
+            # ugly: the while loops can be moved out of the for loop
             for yy in range(len(gnnsubnet.dataset)):
+                print(f'Samples:: {yy+1} of {len(gnnsubnet.dataset)}')
                 data_c = copy(gnnsubnet.dataset[yy])
                 #print(data_c.edge_index)
                 x = data_c.x
