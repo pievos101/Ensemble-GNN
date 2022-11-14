@@ -137,4 +137,29 @@ class ensemble(object):
         self.ensemble = ens
         self.train_accuracy = acc
 
-    #def predict(self):
+    def predict(self, gnnsubnet_test):
+
+        acc  = list()
+        pred = list()
+        true_labels = list()
+        for xx in range(len(self.ensemble)):
+            self.ensemble[xx].predict(gnnsubnet_test)
+            acc.append(self.ensemble[xx].accuracy)
+            pred.append(self.ensemble[xx].predictions_test)
+            true_labels.append(self.ensemble[xx].true_class_test)    
+        self.accuracy_test = acc
+        self.predictions_test = pred
+        self.true_class_test  = true_labels
+        # Majority Vote
+        pred_mv = np.zeros(len(pred[0]))
+        for xx in range(len(pred)):
+            for yy in range(len(pred[0])):
+                if pred[xx][yy] == 1:
+                    pred_mv[yy] = pred_mv[yy] + 1
+                if pred[xx][yy] == 0:
+                    pred_mv[yy] = pred_mv[yy] - 1
+        ids0 = np.where(pred_mv<=0)
+        ids1 = np.where(pred_mv>0)
+        pred_mv[ids0] = 0
+        pred_mv[ids1] = 1
+        self.predictions_test_mv = pred_mv
