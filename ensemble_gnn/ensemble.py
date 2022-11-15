@@ -108,6 +108,7 @@ class ensemble(object):
             self.ensemble[xx].dataset = graphs
             self.ensemble[xx].gene_names = self.gene_names[mod_sub]
             self.modules_gene_names.append(self.gene_names[mod_sub])
+            self.ensemble[xx].modules = mod_sub
 
     def add(self, gnnsubnet):
 
@@ -142,12 +143,24 @@ class ensemble(object):
         self.train_accuracy = acc
 
     def predict(self, gnnsubnet_test):
-        # @FIXME map nodeIDs of ensembles to test set! 
+        # @FIXME@TODO replace topologie of test with train subnetwork
         acc  = list()
         pred = list()
         true_labels = list()
         for xx in range(len(self.ensemble)):
-            self.ensemble[xx].predict(gnnsubnet_test)
+            copy_test = copy(gnnsubnet_test)
+            testgraphs=[]
+            for yy in range(len(copy_test.dataset)):
+                testgraphs.append(Data(x=torch.tensor(np.array(copy_test.dataset[yy].x)[self.ensemble[xx].modules]).float(), 
+                    edge_index=torch.tensor(np.array(self.ensemble[xx].dataset[0].edge_index), dtype=torch.long),
+                            y=copy_test.dataset[yy].y))
+            #graphs.append(Data(x=torch.tensor(x_sub).float(),
+            #    edge_index=torch.tensor([e0_final,e1_final], dtype=torch.long),
+            #                y=data_c.y))
+            #print(testgraphs)
+            copy_test.dataset = testgraphs    
+            #return(copy_test)
+            self.ensemble[xx].predict(copy_test)
             acc.append(self.ensemble[xx].accuracy)
             pred.append(self.ensemble[xx].predictions_test)
             true_labels.append(self.ensemble[xx].true_class_test)    
