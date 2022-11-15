@@ -43,62 +43,64 @@ class ensemble(object):
         ## split the data sets
         for xx in range(len(self.modules)):
             print(f'Ensemble:: {xx+1} of {len(self.modules)}')
-            graphs=[]
             self.ensemble.append(copy(gnnsubnet))
             #print(len(self.ensemble))
             mod_sub = gnnsubnet.modules[xx]
             # now cut data to module
-            # ugly: the while loops can be moved out of the for loop
+            data_c = copy(gnnsubnet.dataset[0])
+            #print(data_c.edge_index)
+            x       = data_c.x
+            x_sub   = x[mod_sub]
+            eindex  = data_c.edge_index
+            eindex0 = data_c.edge_index[0,]
+            eindex1 = data_c.edge_index[1,]
+            res = []
+            i = 0
+            while (i < len(eindex0)):
+                if (mod_sub.count(eindex0[i]) > 0):
+                    res.append(i)
+                i += 1
+            eindex0_sub = res
+            res = []
+            i = 0
+            while (i < len(eindex1)):
+                if (mod_sub.count(eindex1[i]) > 0):
+                    res.append(i)
+                i += 1
+            eindex1_sub = res
+
+            import numpy as np
+            ids = np.intersect1d(eindex0_sub, eindex1_sub)
+            
+            e0 = np.array(eindex[0,][ids])
+            e1 = np.array(eindex[1,][ids])
+
+            # convert ids
+            res = []
+            i = 0
+            while (i < len(e0)):
+                ids = np.where(e0[i]==np.array(mod_sub))[0]
+                res.append(ids)
+                i += 1
+            e0_final = np.array(res).flatten()
+            
+            res = []
+            i = 0
+            while (i < len(e1)):
+                ids = np.where(e1[i]==np.array(mod_sub))[0]
+                res.append(ids)
+                i += 1
+            e1_final = np.array(res).flatten()
+            
+            #print(e0_final)
+            #print(e1_final)
+
+            graphs  = []
             for yy in range(len(gnnsubnet.dataset)):
-                print(f'Samples:: {yy+1} of {len(gnnsubnet.dataset)}')
-                data_c = copy(gnnsubnet.dataset[yy])
-                #print(data_c.edge_index)
-                x = data_c.x
-                x_sub = x[mod_sub]
-                eindex  = data_c.edge_index
-                eindex0 = data_c.edge_index[0,]
-                eindex1 = data_c.edge_index[1,]
-                res = []
-                i = 0
-                while (i < len(eindex0)):
-                    if (mod_sub.count(eindex0[i]) > 0):
-                        res.append(i)
-                    i += 1
-                eindex0_sub = res
-                res = []
-                i = 0
-                while (i < len(eindex1)):
-                    if (mod_sub.count(eindex1[i]) > 0):
-                        res.append(i)
-                    i += 1
-                eindex1_sub = res
-
-                import numpy as np
-                ids = np.intersect1d(eindex0_sub, eindex1_sub)
-                
-                e0 = np.array(eindex[0,][ids])
-                e1 = np.array(eindex[1,][ids])
-
-                # convert ids
-                res = []
-                i = 0
-                while (i < len(e0)):
-                    ids = np.where(e0[i]==np.array(mod_sub))[0]
-                    res.append(ids)
-                    i += 1
-                e0_final = np.array(res).flatten()
-                
-                res = []
-                i = 0
-                while (i < len(e1)):
-                    ids = np.where(e1[i]==np.array(mod_sub))[0]
-                    res.append(ids)
-                    i += 1
-                e1_final = np.array(res).flatten()
-                
-                #print(e0_final)
-                #print(e1_final)
-
+                #print(f'Samples:: {yy+1} of {len(gnnsubnet.dataset)}')          
+                data_c  = copy(gnnsubnet.dataset[yy])
+                x       = data_c.x
+                x_sub   = x[mod_sub]
                 graphs.append(Data(x=torch.tensor(x_sub).float(),
                 edge_index=torch.tensor([e0_final,e1_final], dtype=torch.long),
                             y=data_c.y))
@@ -106,7 +108,6 @@ class ensemble(object):
             self.ensemble[xx].dataset = graphs
             self.ensemble[xx].gene_names = self.gene_names[mod_sub]
             self.modules_gene_names.append(self.gene_names[mod_sub])
-
 
     def add(self, gnnsubnet):
 
@@ -141,7 +142,7 @@ class ensemble(object):
         self.train_accuracy = acc
 
     def predict(self, gnnsubnet_test):
-
+        # @FIXME map nodeIDs of ensembles to test set! 
         acc  = list()
         pred = list()
         true_labels = list()
