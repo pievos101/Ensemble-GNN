@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://https://github.com/pievos101/Ensemble-GNN/blob/main/logo.png" width="400">
+<img src="https://raw.githubusercontent.com/pievos101/Ensemble-GNN/blob/main/logo.png" width="400">
 </p>
 
 # Ensemble-GNN: ensemble learning with graph neural networks for disease module discovery
