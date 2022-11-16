@@ -179,3 +179,17 @@ from sklearn.metrics import accuracy_score
 accuracy_score(e1.true_class_test[0], e1.predictions_test_mv)
 ```
 
+## Citation
+https://academic.oup.com/bioinformatics/article/38/Supplement_2/ii120/6702000
+
+### Bibtex
+@article{pfeifer2022gnn,
+  title={Gnn-subnet: Disease subnetwork detection with explainable graph neural networks},
+  author={Pfeifer, Bastian and Saranti, Anna and Holzinger, Andreas},
+  journal={Bioinformatics},
+  volume={38},
+  number={Supplement\_2},
+  pages={ii120--ii126},
+  year={2022},
+  publisher={Oxford University Press}
+}
