@@ -1,3 +1,7 @@
+<p align="center">
+<img src="https://https://github.com/pievos101/Ensemble-GNN/blob/main/logo.png" width="400">
+</p>
+
 # Ensemble-GNN: ensemble learning with graph neural networks for disease module discovery
 
 ## Installation
@@ -154,7 +158,7 @@ e1.train_accuracy
 
 # create a test set
 # Load the multi-omics data 
-g_test  gnn.GNNSubNet(loc, ppi, feats, targ)
+g_test = gnn.GNNSubNet(loc, ppi, feats, targ)
 
 # predict
 e1.predict(g_test)
