@@ -25,6 +25,8 @@ pip install Ensemble-GNN
 ```
 ## Usage
 
+### Synthetic data
+
 ```python
 from GNNSubNet import GNNSubNet as gnn
 
@@ -75,6 +77,84 @@ e1.train_accuracy
 
 # create a test set
 g_test = gnn.GNNSubNet(loc, ppi, feats, targ, normalize=False)
+
+# predict
+e1.predict(g_test)
+
+# predictions and accuracy for each subnetwork
+# accuracy o the test set
+e1.accuracy_test
+# predictions on the test set
+e1.predictions_test 
+# true class labels of the test set
+e1.true_class_test 
+
+# the overall predictions based on the whole ensemble using majority vote
+e1.predictions_test_mv
+
+# lets check the performance 
+from sklearn.metrics import accuracy_score
+accuracy_score(e1.true_class_test[0], e1.predictions_test_mv)
+```
+
+### PPI network data
+
+```python
+from GNNSubNet import GNNSubNet as gnn
+
+# location of the files
+loc   = "/home/bastian/GitHub/GNN-SubNet/TCGA"
+# PPI network
+ppi   = f'{loc}/KIDNEY_RANDOM_PPI.txt'
+# single-omic features
+#feats = [f'{loc}/KIDNEY_RANDOM_Methy_FEATURES.txt']
+# multi-omic features
+feats = [f'{loc}/KIDNEY_RANDOM_mRNA_FEATURES.txt', f'{loc}/KIDNEY_RANDOM_Methy_FEATURES.txt']
+# outcome class
+targ  = f'{loc}/KIDNEY_RANDOM_TARGET.txt'
+
+# Load the multi-omics data 
+g = gnn.GNNSubNet(loc, ppi, feats, targ)
+
+# Get some general information about the data dimension
+g.summary()
+
+# import ensemble_gnn
+import ensemble_gnn as egnn
+
+# initialization: infer subnetworks and build ensemble
+e1 = egnn.ensemble(g, niter=1) # niter=10 is recommended
+
+# length of ensemble
+len(e1.ensemble)
+
+# train an gnn model on each subnetwork of the ensemble
+e1.train()
+
+# accuracy for each module
+e1.train_accuracy
+
+# the nodes of each ensemble member can be accessed via
+e1.modules_gene_names 
+
+# The first subnetwork used within the ensemble can be obtained from
+e1.ensemble[0].dataset[0].edge_index
+
+# grow the ensemble 
+e1.grow(10)
+
+# check the accuracy
+e1.train_accuracy
+
+# train again with a different train-validation split
+e1.train()
+
+# check the accuracy
+e1.train_accuracy
+
+# create a test set
+# Load the multi-omics data 
+g_test  gnn.GNNSubNet(loc, ppi, feats, targ)
 
 # predict
 e1.predict(g_test)
