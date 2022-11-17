@@ -18,14 +18,15 @@ pip install torch-geometric==2.0.4
 pip install torch-scatter==2.0.9
 pip install torch-sparse==0.6.13
 
-pip install GNNSubNet
+# to install GNNSubNet from source (cloned GitHub repo) run:
+pip install GNN-SubNet/
 ```
 Preferred versions are: torch==1.11.0, torchvision==0.12.0, torch-geometric==2.0.4, torch-scatter==2.0.9, and torch-sparse==0.6.13.
 
-To install Ensemble-GNN from source code run:
+To install Ensemble-GNN from source code (cloned GitHub repo) run:
 
 ```python
-pip install Ensemble-GNN
+pip install Ensemble-GNN/
 ```
 ## Usage
 
