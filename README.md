@@ -178,6 +178,9 @@ e1.predictions_test_mv
 from sklearn.metrics import accuracy_score
 accuracy_score(e1.true_class_test[0], e1.predictions_test_mv)
 ```
+# Miscellaneous
+
+Logo made by Adobe Express Logo Maker: <https://www.adobe.com/express/create/logo>
 
 ## Citation
 https://academic.oup.com/bioinformatics/article/38/Supplement_2/ii120/6702000
