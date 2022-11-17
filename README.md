@@ -179,6 +179,9 @@ e1.predictions_test_mv
 from sklearn.metrics import accuracy_score
 accuracy_score(e1.true_class_test[0], e1.predictions_test_mv)
 ```
+
+# Federated Ensemble Learning
+
 # Miscellaneous
 
 Logo made by Adobe Express Logo Maker: <https://www.adobe.com/express/create/logo>
