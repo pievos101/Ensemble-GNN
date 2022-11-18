@@ -182,6 +182,7 @@ accuracy_score(e1.true_class_test[0], e1.predictions_test_mv)
 ```
 
 # Federated Ensemble Learning
+Coming soon ...
 
 # Miscellaneous
 
