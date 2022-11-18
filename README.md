@@ -8,6 +8,7 @@
 
 The GNN-Subnet package is required 
 
+https://github.com/pievos101/GNN-SubNet
 
 To install GNNSubNet run:
 
