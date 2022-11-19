@@ -51,7 +51,7 @@ g = gnn.GNNSubNet(loc, ppi, feats, targ, normalize=False)
 # Get some general information about the data dimension
 g.summary()
 
-# train-test split 
+# train-test split: 80-20 
 g_train, g_test = egnn.train_test_split(g)
 
 # initialization: infer subnetworks and build ensemble
@@ -98,7 +98,7 @@ e1.true_class_test
 # the overall predictions based on the whole ensemble using majority vote
 e1.predictions_test_mv
 
-# lets check the performance 
+# lets check the performance of the ensemble classifier
 from sklearn.metrics import accuracy_score
 accuracy_score(e1.true_class_test[0], e1.predictions_test_mv)
 ```
@@ -128,7 +128,7 @@ g = gnn.GNNSubNet(loc, ppi, feats, targ)
 # Get some general information about the data dimension
 g.summary()
 
-# train-test split 
+# train-test split: 80-20 
 g_train, g_test = egnn.train_test_split(g)
 
 # initialization: infer subnetworks and build ensemble
@@ -175,7 +175,7 @@ e1.true_class_test
 # the overall predictions based on the whole ensemble using majority vote
 e1.predictions_test_mv
 
-# lets check the performance 
+# lets check the performance of the ensemble classifier
 from sklearn.metrics import accuracy_score
 accuracy_score(e1.true_class_test[0], e1.predictions_test_mv)
 from sklearn.metrics import balanced_accuracy_score
