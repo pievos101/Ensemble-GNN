@@ -183,7 +183,14 @@ balanced_accuracy_score(e1.true_class_test[0], e1.predictions_test_mv)
 ```
 
 # Federated Ensemble Learning
+
+<p align="center">
+<img src="https://github.com/pievos101/Ensemble-GNN/blob/main/fed_logo.png" width="400">
+</p>
+
+
 Coming soon ...
+
 
 # Miscellaneous
 
