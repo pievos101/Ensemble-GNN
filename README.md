@@ -31,7 +31,7 @@ pip install Ensemble-GNN/
 ```
 ## Usage
 
-### Synthetic data
+### Synthetic data - Barabasi Networks
 
 ```python
 # import GNNSubNet
@@ -103,7 +103,7 @@ from sklearn.metrics import accuracy_score
 accuracy_score(e1.true_class_test[0], e1.predictions_test_mv)
 ```
 
-### PPI network data
+### Protein-Protein Interaction (PPI) network data
 
 ```python
 # import GNNSubNet
