@@ -178,6 +178,8 @@ e1.predictions_test_mv
 # lets check the performance 
 from sklearn.metrics import accuracy_score
 accuracy_score(e1.true_class_test[0], e1.predictions_test_mv)
+from sklearn.metrics import balanced_accuracy_score
+balanced_accuracy_score(e1.true_class_test[0], e1.predictions_test_mv)
 ```
 
 # Federated Ensemble Learning
