@@ -69,7 +69,6 @@ class ensemble(object):
                 i += 1
             eindex1_sub = res
 
-            import numpy as np
             ids = np.intersect1d(eindex0_sub, eindex1_sub)
             
             e0 = np.array(eindex[0,][ids])
@@ -143,7 +142,6 @@ class ensemble(object):
         self.train_accuracy = acc
 
     def predict(self, gnnsubnet_test):
-        # @FIXME@TODO replace topologie of test with train subnetwork
         acc  = list()
         pred = list()
         true_labels = list()
@@ -154,12 +152,7 @@ class ensemble(object):
                 testgraphs.append(Data(x=torch.tensor(np.array(copy_test.dataset[yy].x)[self.ensemble[xx].modules]).float(), 
                     edge_index=torch.tensor(np.array(self.ensemble[xx].dataset[0].edge_index), dtype=torch.long),
                             y=copy_test.dataset[yy].y))
-            #graphs.append(Data(x=torch.tensor(x_sub).float(),
-            #    edge_index=torch.tensor([e0_final,e1_final], dtype=torch.long),
-            #                y=data_c.y))
-            #print(testgraphs)
             copy_test.dataset = testgraphs    
-            #return(copy_test)
             self.ensemble[xx].predict(copy_test)
             acc.append(self.ensemble[xx].accuracy)
             pred.append(self.ensemble[xx].predictions_test)
