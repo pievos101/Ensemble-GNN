@@ -34,7 +34,10 @@ pip install Ensemble-GNN/
 ### Synthetic data
 
 ```python
+# import GNNSubNet
 from GNNSubNet import GNNSubNet as gnn
+# import ensemble_gnn
+import ensemble_gnn as egnn
 
 # Synthetic data set  ------------------------- #
 loc   = "/home/bastian/GitHub/GNN-SubNet/GNNSubNet/datasets/synthetic"
@@ -48,11 +51,11 @@ g = gnn.GNNSubNet(loc, ppi, feats, targ, normalize=False)
 # Get some general information about the data dimension
 g.summary()
 
-# import ensemble_gnn
-import ensemble_gnn as egnn
+# train-test split 
+g_train, g_test = egnn.train_test_split(g)
 
 # initialization: infer subnetworks and build ensemble
-e1 = egnn.ensemble(g, niter=1) # niter=10 is recommended
+e1 = egnn.ensemble(g_train, niter=1) # niter=10 is recommended
 
 # length of ensemble
 len(e1.ensemble)
@@ -80,9 +83,6 @@ e1.train()
 
 # check the accuracy
 e1.train_accuracy
-
-# create a test set
-g_test = gnn.GNNSubNet(loc, ppi, feats, targ, normalize=False)
 
 # predict
 e1.predict(g_test)
@@ -106,7 +106,10 @@ accuracy_score(e1.true_class_test[0], e1.predictions_test_mv)
 ### PPI network data
 
 ```python
+# import GNNSubNet
 from GNNSubNet import GNNSubNet as gnn
+# import ensemble_gnn
+import ensemble_gnn as egnn
 
 # location of the files
 loc   = "/home/bastian/GitHub/GNN-SubNet/TCGA"
@@ -125,11 +128,11 @@ g = gnn.GNNSubNet(loc, ppi, feats, targ)
 # Get some general information about the data dimension
 g.summary()
 
-# import ensemble_gnn
-import ensemble_gnn as egnn
+# train-test split 
+g_train, g_test = egnn.train_test_split(g)
 
 # initialization: infer subnetworks and build ensemble
-e1 = egnn.ensemble(g, niter=1) # niter=10 is recommended
+e1 = egnn.ensemble(g_train, niter=1) # niter=10 is recommended
 
 # length of ensemble
 len(e1.ensemble)
@@ -157,10 +160,6 @@ e1.train()
 
 # check the accuracy
 e1.train_accuracy
-
-# create a test set
-# Load the multi-omics data 
-g_test = gnn.GNNSubNet(loc, ppi, feats, targ)
 
 # predict
 e1.predict(g_test)
