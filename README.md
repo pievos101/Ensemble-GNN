@@ -150,7 +150,7 @@ e1.modules_gene_names
 e1.ensemble[0].dataset[0].edge_index
 
 # grow the ensemble 
-e1.grow(10)
+e1.grow(20)
 
 # check the accuracy
 e1.train_accuracy
