@@ -180,6 +180,21 @@ from sklearn.metrics import accuracy_score
 accuracy_score(e1.true_class_test[0], e1.predictions_test_mv)
 from sklearn.metrics import balanced_accuracy_score
 balanced_accuracy_score(e1.true_class_test[0], e1.predictions_test_mv)
+
+# The results can be compared with non-ensemble-based classification
+
+# train the GNN classifier 
+g_train.train()
+
+# predict
+g_train.predict(g_test)
+
+# lets check the performance of the non-ensemble classifier
+from sklearn.metrics import accuracy_score
+accuracy_score(e1.true_class_test[0], g_train.predictions_test)
+from sklearn.metrics import balanced_accuracy_score
+balanced_accuracy_score(e1.true_class_test[0], g_train.predictions_test)
+
 ```
 
 # Federated Ensemble Learning
