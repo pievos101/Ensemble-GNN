@@ -84,7 +84,7 @@ e1.train()
 # check the accuracy
 e1.train_accuracy
 
-# predict
+# predict via Majority Vote
 e1.predict(g_test)
 
 # predictions and accuracy for each subnetwork
@@ -161,7 +161,7 @@ e1.train()
 # check the accuracy
 e1.train_accuracy
 
-# predict
+# predict via Majority Vote
 e1.predict(g_test)
 
 # predictions and accuracy for each subnetwork
@@ -197,7 +197,7 @@ balanced_accuracy_score(e1.true_class_test[0], g_train.predictions_test)
 
 ```
 
-# Federated Ensemble Learning with Ensemble-GNN
+# Federated Ensemble Learning using Ensemble-GNN
 
 <p align="center">
 <img src="https://github.com/pievos101/Ensemble-GNN/blob/main/fed_logo.png" width="400">
