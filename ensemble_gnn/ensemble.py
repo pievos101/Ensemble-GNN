@@ -2,6 +2,7 @@ from torch_geometric.data.data import Data
 import torch
 from copy import copy
 import numpy as np
+import random
 
 class ensemble(object):
     """
@@ -173,3 +174,16 @@ class ensemble(object):
         pred_mv[ids0] = 0
         pred_mv[ids1] = 1
         self.predictions_test_mv = pred_mv
+  
+    def propose(self):
+        ens_len = len(self.ensemble)
+        # randomly select a member
+        id = random.randint(0, ens_len)
+        acc = self.ensemble[id].accuracy
+        dat = copy(self.ensemble[id].dataset)
+        names = self.ensemble[id].gene_names
+
+        return dat[0].edge_index, names, acc
+
+    #def check(self, subnet):
+        # check the subnet on the data
