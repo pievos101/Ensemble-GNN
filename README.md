@@ -197,7 +197,7 @@ balanced_accuracy_score(e1.true_class_test[0], g_train.predictions_test)
 
 ```
 
-# Federated Ensemble Learning using Ensemble-GNN
+# Federated Ensemble Learning with Ensemble-GNN
 
 ## Method 1
 
