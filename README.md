@@ -244,7 +244,7 @@ p2.train()
 # without sharing any data
 global_model = egnn.aggregate([p1,p2])
 
-# Make predictions using the global model
+# Make predictions using the global model via Majority Vote
 global_model.predict(g_test)
 
 # lets check the performance of the federated ensemble classifier
