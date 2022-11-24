@@ -5,6 +5,7 @@ from copy import copy
 import numpy as np
 import random
 
+
 def train_test_split(gnnsubnet):
 	""""
 	Compute train test 
@@ -43,3 +44,17 @@ def split(gnnsubnet):
 
 	return gnn1_a, gnn2_b
 
+def aggregate(models_list):
+	# import GNNSubNet
+	from GNNSubNet import GNNSubNet as gnn
+	# import ensemble_gnn
+	import ensemble_gnn as egnn
+
+	e_all = egnn.ensemble()
+	for xx in range(len(models_list)):
+		e = models_list[xx].send_model()
+		for yy in range(len(e)):
+			e_all.ensemble.append(e[yy])
+	return e_all
+
+	
