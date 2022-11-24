@@ -201,7 +201,7 @@ balanced_accuracy_score(e1.true_class_test[0], g_train.predictions_test)
 
 ## Method 1
 
-The models are collected from all clients and predictions aggregated via Majority Vote. 
+The models are collected from the clients and predictions are aggregated via Majority Vote. 
 
 
 ```python
