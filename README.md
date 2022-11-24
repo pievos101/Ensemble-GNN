@@ -199,10 +199,68 @@ balanced_accuracy_score(e1.true_class_test[0], g_train.predictions_test)
 
 # Federated Ensemble Learning using Ensemble-GNN
 
+## Method 1
+
+The models are collected from all clients and predictions aggregated via Majority Vote. 
+
+
+```python
+# import GNNSubNet
+from GNNSubNet import GNNSubNet as gnn
+# import ensemble_gnn
+import ensemble_gnn as egnn
+
+# location of the files
+loc   = "/home/bastian/GitHub/GNN-SubNet/TCGA"
+# PPI network
+ppi   = f'{loc}/KIDNEY_RANDOM_PPI.txt'
+# single-omic features
+#feats = [f'{loc}/KIDNEY_RANDOM_Methy_FEATURES.txt']
+# multi-omic features
+feats = [f'{loc}/KIDNEY_RANDOM_mRNA_FEATURES.txt', f'{loc}/KIDNEY_RANDOM_Methy_FEATURES.txt']
+# outcome class
+targ  = f'{loc}/KIDNEY_RANDOM_TARGET.txt'
+
+# Load the multi-omics data 
+g = gnn.GNNSubNet(loc, ppi, feats, targ)
+
+# train-test split: 80-20 
+g_train, g_test = egnn.train_test_split(g)
+
+# 50 - 50 split of the training data
+partie1, partie2 = egnn.split(g_train)
+
+# train local ensemble classier of client 1
+p1 = egnn.ensemble(partie1, niter=1)
+p1.train()
+#p1.grow(10)
+
+# train local ensemble classier of client 2
+p2 = egnn.ensemble(partie2, niter=1)
+p2.train()
+#p2.grow(10)
+
+# aggregate the models from each client 
+# without sharing any data
+global_model = egnn.aggregate([p1,p2])
+
+# Make predictions using the global model
+global_model.predict(g_test)
+
+# lets check the performance of the federated ensemble classifier
+from sklearn.metrics import accuracy_score
+accuracy_score(global_model.true_class_test[0], global_model.predictions_test_mv)
+from sklearn.metrics import balanced_accuracy_score
+balanced_accuracy_score(global_model.true_class_test[0], global_model.predictions_test_mv)
+
+```
+
+## Method 2 
 <p align="center">
 <img src="https://github.com/pievos101/Ensemble-GNN/blob/main/fed_logo.png" width="400">
 </p>
 
+No models and data is shared, only the topologies of the subnetworks. Coming soon ...
 
 ```python
 # import GNNSubNet
