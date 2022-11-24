@@ -257,7 +257,7 @@ balanced_accuracy_score(global_model.true_class_test[0], global_model.prediction
 
 ## Method 2 
 
-No models and data is shared, only the topologies of the subnetworks. Coming soon ...
+No models and data are shared, only the topologies of the relevant subnetworks. Coming soon ...
 
 
 <p align="center">
