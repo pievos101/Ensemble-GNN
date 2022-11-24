@@ -256,11 +256,13 @@ balanced_accuracy_score(global_model.true_class_test[0], global_model.prediction
 ```
 
 ## Method 2 
+
+No models and data is shared, only the topologies of the subnetworks. Coming soon ...
+
+
 <p align="center">
 <img src="https://github.com/pievos101/Ensemble-GNN/blob/main/fed_logo.png" width="400">
 </p>
-
-No models and data is shared, only the topologies of the subnetworks. Coming soon ...
 
 ```python
 # import GNNSubNet
