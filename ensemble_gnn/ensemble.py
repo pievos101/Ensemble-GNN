@@ -9,7 +9,7 @@ class ensemble(object):
     The class ensemble represents the main user API for the
     Ensemble_GNN package.
     """
-    def __init__(self, gnnsubnet, niter=1) -> None:
+    def __init__(self, gnnsubnet=None, niter=1) -> None:
 
         self.id = None
         self.ensemble  = list()
@@ -18,11 +18,15 @@ class ensemble(object):
         self.target = None
         self.train_accuracy = list()
         self.test_accuracy = None
-        
+
+        if gnnsubnet == None:
+            return None
+
         # store the data from the graph
         self.dataset = gnnsubnet.dataset
         self.gene_names = gnnsubnet.gene_names
         self.modules_gene_names = list()
+
 
         # train
         gnnsubnet.train()
@@ -174,7 +178,17 @@ class ensemble(object):
         pred_mv[ids0] = 0
         pred_mv[ids1] = 1
         self.predictions_test_mv = pred_mv
-  
+    
+    def send_model(self):
+        m  = list()
+        for xx in range(len(self.ensemble)):
+            gnn_c = copy(self.ensemble[xx])
+            gnn_c.dataset = [self.ensemble[xx].dataset[0]]
+            gnn_c.dataset[0].x = None
+            gnn_c.dataset[0].y = None
+            m.append(gnn_c)
+        return m
+
     def propose(self):
         ens_len = len(self.ensemble)
         # randomly select a member
