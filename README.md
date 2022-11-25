@@ -248,10 +248,22 @@ global_model = egnn.aggregate([p1,p2])
 global_model.predict(g_test)
 
 # lets check the performance of the federated ensemble classifier
-from sklearn.metrics import accuracy_score
-accuracy_score(global_model.true_class_test[0], global_model.predictions_test_mv)
 from sklearn.metrics import balanced_accuracy_score
+from sklearn.metrics import accuracy_score
+
+accuracy_score(global_model.true_class_test[0], global_model.predictions_test_mv)
 balanced_accuracy_score(global_model.true_class_test[0], global_model.predictions_test_mv)
+
+# Lets check the client-specific performances
+# client 1 
+p1.predict(g_test)
+accuracy_score(p1.true_class_test[0], p1.predictions_test_mv)
+balanced_accuracy_score(p1.true_class_test[0], p1.predictions_test_mv)
+
+# client 2 
+p2.predict(g_test)
+accuracy_score(p2.true_class_test[0], p2.predictions_test_mv)
+balanced_accuracy_score(p2.true_class_test[0], p2.predictions_test_mv)
 
 ```
 
