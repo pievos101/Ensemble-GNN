@@ -1,6 +1,7 @@
 from torch_geometric.data.data import Data
 import torch
-from copy import copy
+#from copy import copy
+import copy
 import numpy as np
 import random
 
@@ -48,11 +49,11 @@ class ensemble(object):
         ## split the data sets
         for xx in range(len(self.modules)):
             print(f'Ensemble:: {xx+1} of {len(self.modules)}')
-            self.ensemble.append(copy(gnnsubnet))
+            self.ensemble.append(copy.deepcopy(gnnsubnet))
             #print(len(self.ensemble))
             mod_sub = gnnsubnet.modules[xx]
             # now cut data to module
-            data_c = copy(gnnsubnet.dataset[0])
+            data_c = copy.deepcopy(gnnsubnet.dataset[0])
             #print(data_c.edge_index)
             x       = data_c.x
             x_sub   = x[mod_sub]
@@ -102,7 +103,7 @@ class ensemble(object):
             graphs  = []
             for yy in range(len(gnnsubnet.dataset)):
                 #print(f'Samples:: {yy+1} of {len(gnnsubnet.dataset)}')          
-                data_c  = copy(gnnsubnet.dataset[yy])
+                data_c  = copy.deepcopy(gnnsubnet.dataset[yy])
                 x       = data_c.x
                 x_sub   = x[mod_sub]
                 graphs.append(Data(x=torch.tensor(x_sub).float(),
@@ -141,7 +142,7 @@ class ensemble(object):
         for xx in range(len(samp)):
             times = samp[xx]
             for yy in range(times):
-                ens.append(copy(self.ensemble[xx]))
+                ens.append(copy.deepcopy(self.ensemble[xx]))
                 acc.append(self.ensemble[xx].accuracy)
         self.ensemble = ens
         self.train_accuracy = acc
@@ -151,7 +152,7 @@ class ensemble(object):
         pred = list()
         true_labels = list()
         for xx in range(len(self.ensemble)):
-            copy_test = copy(gnnsubnet_test)
+            copy_test = copy.deepcopy(gnnsubnet_test)
             testgraphs=[]
             for yy in range(len(copy_test.dataset)):
                 testgraphs.append(Data(x=torch.tensor(np.array(copy_test.dataset[yy].x)[self.ensemble[xx].modules]).float(), 
@@ -182,8 +183,8 @@ class ensemble(object):
     def send_model(self):
         m  = list()
         for xx in range(len(self.ensemble)):
-            gnn_c = copy(self.ensemble[xx])
-            gnn_c.dataset = [self.ensemble[xx].dataset[0]]
+            gnn_c = copy.deepcopy(self.ensemble[xx])
+            gnn_c.dataset = [gnn_c.dataset[0]]
             gnn_c.dataset[0].x = None
             gnn_c.dataset[0].y = None
             m.append(gnn_c)
@@ -194,7 +195,7 @@ class ensemble(object):
         # randomly select a member
         id = random.randint(0, ens_len)
         acc = self.ensemble[id].accuracy
-        dat = copy(self.ensemble[id].dataset)
+        dat = copy.deepcopy(self.ensemble[id].dataset)
         names = self.ensemble[id].gene_names
 
         return dat[0].edge_index, names, acc
