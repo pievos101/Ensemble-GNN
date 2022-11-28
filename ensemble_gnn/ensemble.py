@@ -104,7 +104,7 @@ class ensemble(object):
             for yy in range(len(gnnsubnet.dataset)):
                 #print(f'Samples:: {yy+1} of {len(gnnsubnet.dataset)}')          
                 data_c  = copy.deepcopy(gnnsubnet.dataset[yy])
-                x       = data_c.x
+                x       = data_c.x.numpy()
                 x_sub   = x[mod_sub]
                 graphs.append(Data(x=torch.tensor(x_sub).float(),
                 edge_index=torch.tensor([e0_final,e1_final], dtype=torch.long),
