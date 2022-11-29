@@ -205,7 +205,7 @@ The models are collected from the clients and predictions are aggregated via Maj
 
 
 <p align="center">
-<img src="https://github.com/pievos101/Ensemble-GNN/blob/main/fed_logo1.png" width="400">
+<img src="https://github.com/pievos101/Ensemble-GNN/blob/main/fed_logo1.png" width="500">
 </p>
 
 
