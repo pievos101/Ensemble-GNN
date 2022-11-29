@@ -208,7 +208,7 @@ The models are collected from the clients and predictions are aggregated via Maj
 <img src="https://github.com/pievos101/Ensemble-GNN/blob/main/fed_logo1.png" width="500">
 </p>
 
-
+### Example code 
 ```python
 # import GNNSubNet
 from GNNSubNet import GNNSubNet as gnn
