@@ -204,6 +204,11 @@ balanced_accuracy_score(e1.true_class_test[0], g_train.predictions_test)
 The models are collected from the clients and predictions are aggregated via Majority Vote. 
 
 
+<p align="center">
+<img src="https://github.com/pievos101/Ensemble-GNN/blob/main/fed_logo1.png" width="400">
+</p>
+
+
 ```python
 # import GNNSubNet
 from GNNSubNet import GNNSubNet as gnn
