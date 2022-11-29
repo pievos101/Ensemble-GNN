@@ -2,7 +2,7 @@
 <img src="https://github.com/pievos101/Ensemble-GNN/blob/main/logo2.png" width="400">
 </p>
 
-# Ensemble-GNN: ensemble learning with graph neural networks for disease module discovery
+# Ensemble learning with graph neural networks for disease module discovery
 
 ## Installation
 
