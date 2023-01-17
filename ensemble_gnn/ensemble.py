@@ -179,6 +179,7 @@ class ensemble(object):
         pred_mv[ids0] = 0
         pred_mv[ids1] = 1
         self.predictions_test_mv = pred_mv
+        return(pred_mv)
     
     def send_model(self):
         m  = list()

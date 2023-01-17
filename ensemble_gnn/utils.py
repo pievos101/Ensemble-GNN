@@ -21,8 +21,15 @@ def train_test_split(gnnsubnet):
 	train_dataset_list = dataset_list[:train_set_len]
 	test_dataset_list  = dataset_list[train_set_len:]
 	gnn1_train.dataset = train_dataset_list
-	gnn2_test.dataset  = test_dataset_list
+	label = []
+	for xx in range(len(train_dataset_list)): label.append(train_dataset_list[xx].y)
+	gnn1_train.true_class = np.array(label)
 
+	gnn2_test.dataset  = test_dataset_list
+	label = []
+	for xx in range(len(test_dataset_list)): label.append(test_dataset_list[xx].y)
+	gnn2_test.true_class = np.array(label)
+	
 	return gnn1_train, gnn2_test
 
 def split(gnnsubnet):
