@@ -85,22 +85,15 @@ e1.train()
 e1.train_accuracy
 
 # predict via Majority Vote
-e1.predict(g_test)
-
-# predictions and accuracy for each subnetwork
-# accuracy o the test set
-e1.accuracy_test
-# predictions on the test set
-e1.predictions_test 
-# true class labels of the test set
-e1.true_class_test 
+predicted_class = e1.predict(g_test)
 
 # the overall predictions based on the whole ensemble using majority vote
-e1.predictions_test_mv
+predicted_class
+#e1.predictions_test_mv
 
 # lets check the performance of the ensemble classifier
 from sklearn.metrics import accuracy_score
-accuracy_score(e1.true_class_test[0], e1.predictions_test_mv)
+accuracy_score(g_test.true_class, predicted_class)
 ```
 
 ### Protein-Protein Interaction (PPI) network data
@@ -162,24 +155,16 @@ e1.train()
 e1.train_accuracy
 
 # predict via Majority Vote
-e1.predict(g_test)
-
-# predictions and accuracy for each subnetwork
-# accuracy o the test set
-e1.accuracy_test
-# predictions on the test set
-e1.predictions_test 
-# true class labels of the test set
-e1.true_class_test 
+predicted_class = e1.predict(g_test)
 
 # the overall predictions based on the whole ensemble using majority vote
-e1.predictions_test_mv
+predicted_class
 
 # lets check the performance of the ensemble classifier
 from sklearn.metrics import accuracy_score
-accuracy_score(e1.true_class_test[0], e1.predictions_test_mv)
+accuracy_score(g_test.true_class, predicted_class)
 from sklearn.metrics import balanced_accuracy_score
-balanced_accuracy_score(e1.true_class_test[0], e1.predictions_test_mv)
+balanced_accuracy_score(g_test.true_class, predicted_class)
 
 # The results can be compared with non-ensemble-based classification
 
@@ -187,13 +172,13 @@ balanced_accuracy_score(e1.true_class_test[0], e1.predictions_test_mv)
 g_train.train()
 
 # predict
-g_train.predict(g_test)
+predicted_class = g_train.predict(g_test)
 
 # lets check the performance of the non-ensemble classifier
 from sklearn.metrics import accuracy_score
-accuracy_score(e1.true_class_test[0], g_train.predictions_test)
+accuracy_score(g_test.true_class, predicted_class)
 from sklearn.metrics import balanced_accuracy_score
-balanced_accuracy_score(e1.true_class_test[0], g_train.predictions_test)
+balanced_accuracy_score(g_test.true_class, predicted_class)
 
 ```
 
@@ -202,7 +187,6 @@ balanced_accuracy_score(e1.true_class_test[0], g_train.predictions_test)
 ## Method 1
 
 The models are collected from the clients and predictions are aggregated via Majority Vote. 
-
 
 <p align="center">
 <img src="https://github.com/pievos101/Ensemble-GNN/blob/main/fed_logo1.png" width="500">
@@ -250,29 +234,29 @@ p2.train()
 global_model = egnn.aggregate([p1,p2])
 
 # Make predictions using the global model via Majority Vote
-global_model.predict(g_test)
+predicted_class = global_model.predict(g_test)
 
 # lets check the performance of the federated ensemble classifier
 from sklearn.metrics import balanced_accuracy_score
 from sklearn.metrics import accuracy_score
 
-accuracy_score(global_model.true_class_test[0], global_model.predictions_test_mv)
-balanced_accuracy_score(global_model.true_class_test[0], global_model.predictions_test_mv)
+accuracy_score(g_test.true_class, predicted_class)
+balanced_accuracy_score(g_test.true_class, predicted_class)
 
 # Lets check the client-specific performances
 # client 1 
-p1.predict(g_test)
-accuracy_score(p1.true_class_test[0], p1.predictions_test_mv)
-balanced_accuracy_score(p1.true_class_test[0], p1.predictions_test_mv)
+p1_predicted_class = p1.predict(g_test)
+accuracy_score(g_test.true_class, p1_predicted_class)
+balanced_accuracy_score(g_test.true_class, p1_predicted_class)
 
 # client 2 
-p2.predict(g_test)
-accuracy_score(p2.true_class_test[0], p2.predictions_test_mv)
-balanced_accuracy_score(p2.true_class_test[0], p2.predictions_test_mv)
+p2_predicted_class = p2.predict(g_test)
+accuracy_score(g_test.true_class, p2_predicted_class)
+balanced_accuracy_score(g_test.true_class, p2_predicted_class)
 
 ```
 
-## Method 2 
+## Method 2 (in progress ...)
 
 No models and data are shared, only the topologies of the relevant subnetworks. Coming soon ...
 
