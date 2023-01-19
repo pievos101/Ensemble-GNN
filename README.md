@@ -72,7 +72,7 @@ e1.modules_gene_names
 # The first subnetwork used within the ensemble can be obtained from
 e1.ensemble[0].dataset[0].edge_index
 
-# grow the ensemble 
+# grow the ensemble (greedy step)
 e1.grow(10)
 
 # check the accuracy
@@ -93,7 +93,11 @@ predicted_class
 
 # lets check the performance of the ensemble classifier
 from sklearn.metrics import accuracy_score
-accuracy_score(g_test.true_class, predicted_class)
+acc = accuracy_score(g_test.true_class, predicted_class)
+
+print("\n-----------")
+print("Accuracy of ensemble classifier:",acc)
+
 ```
 
 ### Protein-Protein Interaction (PPI) network data
@@ -142,7 +146,7 @@ e1.modules_gene_names
 # The first subnetwork used within the ensemble can be obtained from
 e1.ensemble[0].dataset[0].edge_index
 
-# grow the ensemble 
+# grow the ensemble (greedy step)
 e1.grow(20)
 
 # check the accuracy
@@ -161,10 +165,14 @@ predicted_class = e1.predict(g_test)
 predicted_class
 
 # lets check the performance of the ensemble classifier
+print("\n-----------")
 from sklearn.metrics import accuracy_score
-accuracy_score(g_test.true_class, predicted_class)
+acc = accuracy_score(g_test.true_class, predicted_class)
+print("Accuracy of ensemble classifier:", acc)
+
 from sklearn.metrics import balanced_accuracy_score
-balanced_accuracy_score(g_test.true_class, predicted_class)
+acc_bal = balanced_accuracy_score(g_test.true_class, predicted_class)
+print("Balanced accuracy of ensemble classifier:", acc_bal)
 
 # The results can be compared with non-ensemble-based classification
 
@@ -176,10 +184,12 @@ predicted_class = g_train.predict(g_test)
 
 # lets check the performance of the non-ensemble classifier
 from sklearn.metrics import accuracy_score
-accuracy_score(g_test.true_class, predicted_class)
-from sklearn.metrics import balanced_accuracy_score
-balanced_accuracy_score(g_test.true_class, predicted_class)
+acc = accuracy_score(g_test.true_class, predicted_class)
+print("Accuracy of ensemble classifier:", acc)
 
+from sklearn.metrics import balanced_accuracy_score
+acc_bal = balanced_accuracy_score(g_test.true_class, predicted_class)
+print("Balanced accuracy of ensemble classifier:", acc_bal)
 ```
 
 # Federated Ensemble Learning with Ensemble-GNN
@@ -219,15 +229,39 @@ g_train, g_test = egnn.train_test_split(g)
 # 50 - 50 split of the training data
 partie1, partie2 = egnn.split(g_train)
 
-# train local ensemble classier of client 1
+# create local ensemble classier of client 1
 p1 = egnn.ensemble(partie1, niter=1)
+# train local ensemble classier of client 1
 p1.train()
-#p1.grow(10)
+#p1.grow(10) # greedy step
 
-# train local ensemble classier of client 2
+# create local ensemble classier of client 2
 p2 = egnn.ensemble(partie2, niter=1)
+# train local ensemble classier of client 2
 p2.train()
-#p2.grow(10)
+#p2.grow(10) # greedy step
+
+# Lets check the client-specific performances
+from sklearn.metrics import balanced_accuracy_score
+from sklearn.metrics import accuracy_score
+
+## client 1 
+p1_predicted_class = p1.predict(g_test)
+acc1 = accuracy_score(g_test.true_class, p1_predicted_class)
+acc1_bal = balanced_accuracy_score(g_test.true_class, p1_predicted_class)
+
+## client 2 
+p2_predicted_class = p2.predict(g_test)
+acc2 = accuracy_score(g_test.true_class, p2_predicted_class)
+acc2_bal = balanced_accuracy_score(g_test.true_class, p2_predicted_class)
+
+print("\n-----------")
+print("Balanced accuracy of client 1 ensemble classifier:", acc1_bal)
+print("Accuracy of client1 ensemble classifier:", acc1)
+
+print("\n-----------")
+print("Balanced accuracy of client 2 ensemble classifier:", acc2_bal)
+print("Accuracy of client2 ensemble classifier:", acc2)
 
 # aggregate the models from each client 
 # without sharing any data
@@ -236,23 +270,15 @@ global_model = egnn.aggregate([p1,p2])
 # Make predictions using the global model via Majority Vote
 predicted_class = global_model.predict(g_test)
 
-# lets check the performance of the federated ensemble classifier
+# Lets check the performance of the federated ensemble classifier
 from sklearn.metrics import balanced_accuracy_score
 from sklearn.metrics import accuracy_score
 
-accuracy_score(g_test.true_class, predicted_class)
-balanced_accuracy_score(g_test.true_class, predicted_class)
-
-# Lets check the client-specific performances
-# client 1 
-p1_predicted_class = p1.predict(g_test)
-accuracy_score(g_test.true_class, p1_predicted_class)
-balanced_accuracy_score(g_test.true_class, p1_predicted_class)
-
-# client 2 
-p2_predicted_class = p2.predict(g_test)
-accuracy_score(g_test.true_class, p2_predicted_class)
-balanced_accuracy_score(g_test.true_class, p2_predicted_class)
+acc = accuracy_score(g_test.true_class, predicted_class)
+acc_bal = balanced_accuracy_score(g_test.true_class, predicted_class)
+print("\n-----------")
+print("Balanced accuracy of global ensemble classifier:", acc_bal)
+print("Accuracy of global ensemble classifier:", acc)
 
 ```
 
