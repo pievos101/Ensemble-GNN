@@ -114,6 +114,7 @@ class ensemble(object):
             self.ensemble[xx].gene_names = self.gene_names[mod_sub]
             self.modules_gene_names.append(self.gene_names[mod_sub])
             self.ensemble[xx].modules = mod_sub
+            self.ensemble[xx].model = None
 
     def add(self, gnnsubnet):
 
@@ -166,6 +167,7 @@ class ensemble(object):
         self.accuracy_test = acc
         self.predictions_test = pred
         self.true_class_test  = true_labels
+        
         # Majority Vote
         pred_mv = np.zeros(len(pred[0]))
         for xx in range(len(pred)):
