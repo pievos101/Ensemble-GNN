@@ -73,7 +73,7 @@ e1.modules_gene_names
 e1.ensemble[0].dataset[0].edge_index
 
 # grow the ensemble (greedy step)
-e1.grow(10)
+# e1.grow(10)
 
 # check the accuracy
 e1.train_accuracy
@@ -92,11 +92,18 @@ predicted_class
 #e1.predictions_test_mv
 
 # lets check the performance of the ensemble classifier
+from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score
+
+
 acc = accuracy_score(g_test.true_class, predicted_class)
+confusion_matrix(g_test.true_class,predicted_class)
+
+from sklearn.metrics.cluster import normalized_mutual_info_score
+normalized_mutual_info_score(g_test.true_class,predicted_class)
 
 print("\n-----------")
-print("Accuracy of ensemble classifier:",acc)
+print("Accuracy of ensemble classifier:", acc)
 
 ```
 
@@ -174,6 +181,11 @@ from sklearn.metrics import balanced_accuracy_score
 acc_bal = balanced_accuracy_score(g_test.true_class, predicted_class)
 print("Balanced accuracy of ensemble classifier:", acc_bal)
 
+from sklearn.metrics.cluster import normalized_mutual_info_score
+nmi = normalized_mutual_info_score(g_test.true_class,predicted_class)
+print("NMI of ensemble classifier:", nmi)
+
+
 # The results can be compared with non-ensemble-based classification
 
 # train the GNN classifier 
@@ -190,6 +202,12 @@ print("Accuracy of ensemble classifier:", acc)
 from sklearn.metrics import balanced_accuracy_score
 acc_bal = balanced_accuracy_score(g_test.true_class, predicted_class)
 print("Balanced accuracy of ensemble classifier:", acc_bal)
+
+from sklearn.metrics.cluster import normalized_mutual_info_score
+nmi = normalized_mutual_info_score(g_test.true_class,predicted_class)
+print("NMI of ensemble classifier:", nmi)
+
+
 ```
 
 # Federated Ensemble Learning with Ensemble-GNN
@@ -257,11 +275,22 @@ acc2_bal = balanced_accuracy_score(g_test.true_class, p2_predicted_class)
 
 print("\n-----------")
 print("Balanced accuracy of client 1 ensemble classifier:", acc1_bal)
-print("Accuracy of client1 ensemble classifier:", acc1)
+print("Accuracy of client 1 ensemble classifier:", acc1)
 
 print("\n-----------")
 print("Balanced accuracy of client 2 ensemble classifier:", acc2_bal)
-print("Accuracy of client2 ensemble classifier:", acc2)
+print("Accuracy of client 2 ensemble classifier:", acc2)
+
+from sklearn.metrics.cluster import normalized_mutual_info_score
+nmi1 = normalized_mutual_info_score(g_test.true_class,p1_predicted_class)
+nmi2 = normalized_mutual_info_score(g_test.true_class,p2_predicted_class)
+
+print("\n-----------")
+print("NMI of client 1 ensemble classifier:", nmi1)
+
+print("\n-----------")
+print("NMI of client 2 ensemble classifier:", nmi2)
+
 
 # aggregate the models from each client 
 # without sharing any data
@@ -279,6 +308,12 @@ acc_bal = balanced_accuracy_score(g_test.true_class, predicted_class)
 print("\n-----------")
 print("Balanced accuracy of global ensemble classifier:", acc_bal)
 print("Accuracy of global ensemble classifier:", acc)
+
+from sklearn.metrics.cluster import normalized_mutual_info_score
+nmi = normalized_mutual_info_score(g_test.true_class,predicted_class)
+
+print("\n-----------")
+print("NMI of global ensemble classifier:", nmi)
 
 ```
 
