@@ -6,14 +6,14 @@
 
 ## Installation
 
-The GNN-Subnet package is required 
+The GNN-Subnet package is required
 
 https://github.com/pievos101/GNN-SubNet
 
 To install GNNSubNet run:
 
 ```python
-pip install torch==1.11.0 
+pip install torch==1.11.0
 pip install torchvision==0.12.0
 pip install torch-geometric==2.0.4
 pip install torch-scatter==2.0.9
@@ -51,8 +51,8 @@ g = gnn.GNNSubNet(loc, ppi, feats, targ, normalize=False)
 # Get some general information about the data dimension
 g.summary()
 
-# train-test split: 80-20 
-g_train, g_test = egnn.train_test_split(g)
+# train-test split: 80-20
+g_train, g_test = egnn.split(g, 0.8)
 
 # initialization: infer subnetworks and build ensemble
 e1 = egnn.ensemble(g_train, niter=1) # niter=10 is recommended
@@ -67,12 +67,12 @@ e1.train()
 e1.train_accuracy
 
 # the nodes of each ensemble member can be accessed via
-e1.modules_gene_names 
+e1.modules_gene_names
 
 # The first subnetwork used within the ensemble can be obtained from
 e1.ensemble[0].dataset[0].edge_index
 
-# grow the ensemble 
+# grow the ensemble
 e1.grow(10)
 
 # check the accuracy
@@ -115,14 +115,14 @@ feats = [f'{loc}/KIDNEY_RANDOM_mRNA_FEATURES.txt', f'{loc}/KIDNEY_RANDOM_Methy_F
 # outcome class
 targ  = f'{loc}/KIDNEY_RANDOM_TARGET.txt'
 
-# Load the multi-omics data 
+# Load the multi-omics data
 g = gnn.GNNSubNet(loc, ppi, feats, targ)
 
 # Get some general information about the data dimension
 g.summary()
 
-# train-test split: 80-20 
-g_train, g_test = egnn.train_test_split(g)
+# train-test split: 80-20
+g_train, g_test = egnn.split(g, 0.8)
 
 # initialization: infer subnetworks and build ensemble
 e1 = egnn.ensemble(g_train, niter=1) # niter=10 is recommended
@@ -137,12 +137,12 @@ e1.train()
 e1.train_accuracy
 
 # the nodes of each ensemble member can be accessed via
-e1.modules_gene_names 
+e1.modules_gene_names
 
 # The first subnetwork used within the ensemble can be obtained from
 e1.ensemble[0].dataset[0].edge_index
 
-# grow the ensemble 
+# grow the ensemble
 e1.grow(20)
 
 # check the accuracy
@@ -168,7 +168,7 @@ balanced_accuracy_score(g_test.true_class, predicted_class)
 
 # The results can be compared with non-ensemble-based classification
 
-# train the GNN classifier 
+# train the GNN classifier
 g_train.train()
 
 # predict
@@ -186,13 +186,13 @@ balanced_accuracy_score(g_test.true_class, predicted_class)
 
 ## Method 1
 
-The models are collected from the clients and predictions are aggregated via Majority Vote. 
+The models are collected from the clients and predictions are aggregated via Majority Vote.
 
 <p align="center">
 <img src="https://github.com/pievos101/Ensemble-GNN/blob/main/fed_logo1.png" width="500">
 </p>
 
-### Example code 
+### Example code
 ```python
 # import GNNSubNet
 from GNNSubNet import GNNSubNet as gnn
@@ -210,11 +210,11 @@ feats = [f'{loc}/KIDNEY_RANDOM_mRNA_FEATURES.txt', f'{loc}/KIDNEY_RANDOM_Methy_F
 # outcome class
 targ  = f'{loc}/KIDNEY_RANDOM_TARGET.txt'
 
-# Load the multi-omics data 
+# Load the multi-omics data
 g = gnn.GNNSubNet(loc, ppi, feats, targ)
 
-# train-test split: 80-20 
-g_train, g_test = egnn.train_test_split(g)
+# train-test split: 80-20
+g_train, g_test = egnn.split(g, 0.8)
 
 # 50 - 50 split of the training data
 partie1, partie2 = egnn.split(g_train)
@@ -229,7 +229,7 @@ p2 = egnn.ensemble(partie2, niter=1)
 p2.train()
 #p2.grow(10)
 
-# aggregate the models from each client 
+# aggregate the models from each client
 # without sharing any data
 global_model = egnn.aggregate([p1,p2])
 
@@ -244,16 +244,71 @@ accuracy_score(g_test.true_class, predicted_class)
 balanced_accuracy_score(g_test.true_class, predicted_class)
 
 # Lets check the client-specific performances
-# client 1 
+# client 1
 p1_predicted_class = p1.predict(g_test)
 accuracy_score(g_test.true_class, p1_predicted_class)
 balanced_accuracy_score(g_test.true_class, p1_predicted_class)
 
-# client 2 
+# client 2
 p2_predicted_class = p2.predict(g_test)
 accuracy_score(g_test.true_class, p2_predicted_class)
 balanced_accuracy_score(g_test.true_class, p2_predicted_class)
 
+```
+
+### Example code for multiple parties
+```python
+#!/usr/bin/env python3
+from GNNSubNet import GNNSubNet as gnn
+import ensemble_gnn as egnn
+import copy
+
+# location of the files
+loc   = "/home/bastian/GitHub/GNN-SubNet/TCGA"
+# PPI network
+ppi   = f'{loc}/KIDNEY_RANDOM_PPI.txt'
+# single-omic features
+#feats = [f'{loc}/KIDNEY_RANDOM_Methy_FEATURES.txt']
+# multi-omic features
+feats = [f'{loc}/KIDNEY_RANDOM_mRNA_FEATURES.txt', f'{loc}/KIDNEY_RANDOM_Methy_FEATURES.txt']
+# outcome class
+targ  = f'{loc}/KIDNEY_RANDOM_TARGET.txt'
+
+# Load the multi-omics data
+g = gnn.GNNSubNet(loc, ppi, feats, targ)
+
+# Number of parties
+parties: int = 4
+
+# train-test split: 80:20
+g_train, g_test = egnn.split(g, 0.8)
+
+# Split data equaliy with split_n and train single models
+learned_ensembles: list = []
+for party in egnn.split_n(g, parties):
+    pn = egnn.ensemble(party, niter=1)
+    pn.train()
+    #pn.grow(10)
+    learned_ensembles.append(pn)
+
+# Aggregate all trained ensemble models
+global_model = egnn.aggregate(learned_ensembles)
+
+# lets check the performance of the federated ensemble classifier
+from sklearn.metrics import balanced_accuracy_score
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import matthews_corrcoef
+scores = [("Acc", accuracy_score), ("BalAcc", balanced_accuracy_score), ("MCC", matthews_corrcoef)]
+
+predicted_class = global_model.predict(g_test)
+print("# Global model performance")
+print(", ".join(["%s: %.3f" % (c[0], c[1](g_test.true_class, predicted_class)) for c in scores]))
+
+for party in range(0, len(learned_ensembles)):
+    test = copy.deepcopy(g_test)
+    pn_predicted_class = learned_ensembles[party].predict(test)
+    print("# Party %d model performance" % (party+1))
+    print(", ".join(["%s: %.3f" % (c[0], c[1](test.true_class, pn_predicted_class)) for c in scores]))
 ```
 
 ## Method 2 (in progress ...)
@@ -282,7 +337,7 @@ feats = [f'{loc}/KIDNEY_RANDOM_mRNA_FEATURES.txt', f'{loc}/KIDNEY_RANDOM_Methy_F
 # outcome class
 targ  = f'{loc}/KIDNEY_RANDOM_TARGET.txt'
 
-# Load the multi-omics data 
+# Load the multi-omics data
 g = gnn.GNNSubNet(loc, ppi, feats, targ)
 
 partie1, partie2 = egnn.split(g)
@@ -300,7 +355,7 @@ p2.train()
 subnet = p1.propose()
 
 # Partie2 now checks whether this subnet is useful
-# if yes, it will locally be included 
+# if yes, it will locally be included
 
 # p2.check(subnet)
 

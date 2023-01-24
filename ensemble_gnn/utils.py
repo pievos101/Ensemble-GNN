@@ -29,14 +29,9 @@ def split(gnnsubnet: GNNSubNet, split: float = 0.8, random_seed: int = 42) -> tu
 	train_dataset_list: list = dataset_list[:train_set_len]
 	test_dataset_list: list  = dataset_list[train_set_len:]
 	gnn1_train.dataset = train_dataset_list
-	label = []
-	for xx in range(len(train_dataset_list)): label.append(train_dataset_list[xx].y)
-	gnn1_train.true_class = np.array(label)
-
+	gnn1_train.true_class = np.array([train_dataset_list[xx].y for xx in range(len(train_dataset_list))])
 	gnn2_test.dataset  = test_dataset_list
-	label = []
-	for xx in range(len(test_dataset_list)): label.append(test_dataset_list[xx].y)
-	gnn2_test.true_class = np.array(label)
+	gnn2_test.true_class = np.array([test_dataset_list[xx].y for xx in range(len(test_dataset_list))])
 
 	return gnn1_train, gnn2_test
 
@@ -53,19 +48,31 @@ def split_n(gnnsubnet: GNNSubNet, parties: int = 2, proportions: list = None, ra
 	"""
 
 	gnn_subnets: list = []
+	counter: int = 0
+
 	dataset_list = copy.deepcopy(gnnsubnet.dataset)
-	print(gnn_data_list)
 	random.seed(random_seed)
 	random.shuffle(dataset_list)
 
-	if proportions is not None and type(proportions) == list and \
-		len(proportions) > 1 and sum(proportions) == 1:
-		pass
+	# Reset if proportions does not fit the requirements
+	if not(proportions is not None and type(proportions) == list and \
+		len(proportions) > 1 and sum(proportions) == 1):
+		proportions = [1/parties for fraction in range(0, parties)]
 
-	for p in parties:
-		pass
+	ranges: list = [round(len(dataset_list)*r) for r in proportions]
+	# change last element if the sum of rounded intervals is not equal the length of the dataset
+	if sum(ranges) != len(dataset_list):
+		ranges[len(ranges)-1] = len(dataset_list) - sum(ranges[:-1])
 
-	return []
+	for p in range(0, parties):
+		# print("%d: %d:%d" % (p, counter, counter+ranges[p]))
+		gnn: GNNSubNet = copy.deepcopy(gnnsubnet)
+		gnn.dataset = dataset_list[counter:counter+ranges[p]]
+		gnn.true_class = np.array([gnn.dataset[t].y for t in range(len(gnn.dataset))])
+		counter += ranges[p]
+		gnn_subnets.append(gnn)
+
+	return gnn_subnets
 
 
 def aggregate(models_list: list):
