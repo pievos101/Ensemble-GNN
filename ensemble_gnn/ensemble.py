@@ -105,7 +105,7 @@ class ensemble(object):
                 x       = data_c.x.numpy()
                 x_sub   = x[mod_sub]
                 graphs.append(Data(x=torch.tensor(x_sub).float(),
-                edge_index=torch.tensor([e0_final,e1_final], dtype=torch.long),
+                edge_index=torch.tensor(np.array([e0_final,e1_final]), dtype=torch.long),
                             y=data_c.y))
 
             self.ensemble[xx].dataset = graphs
