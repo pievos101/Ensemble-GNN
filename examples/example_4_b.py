@@ -64,7 +64,7 @@ for i in range(0, rounds):
     # Each client applies the ensembled model on his own test data
     for party in range(0, len(learned_ensembles)):
         predicted_ensemble_classes = global_model.predict(parties_testdata[party])
-        accuracy_ensemble.append(balanced_accuracy_score(parties_testdata[party].true_class, predicted_local_classes))
+        accuracy_ensemble.append(balanced_accuracy_score(parties_testdata[party].true_class, predicted_ensemble_classes))
 
     print("## All balanced accuracy values from global tests: %s" % str(accuracy_ensemble))
     avg_local: float = sum(accuracy_single)/len(accuracy_single)
