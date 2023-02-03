@@ -1,5 +1,6 @@
 # utils
 from torch_geometric.data.data import Data
+from sklearn.model_selection import KFold
 from GNNSubNet import GNNSubNet
 from GNNSubNet import GNNSubNet as gnn
 import ensemble_gnn as egnn
@@ -69,6 +70,34 @@ def split_n(gnnsubnet: GNNSubNet, parties: int = 2, proportions: list = None, ra
 		gnn.true_class = np.array([gnn.dataset[t].y for t in range(len(gnn.dataset))])
 		counter += ranges[p]
 		gnn_subnets.append(gnn)
+
+	return gnn_subnets
+
+
+def split_n_fold_cv(gnnsubnet: GNNSubNet, n_splits: int = 3, random_seed: int = 42) -> list:
+	"""
+	Split dataset from GNNSubnet into fractions for n_splits-fold crossvalidation
+	:param GNNSubNet gnnsubnet:  	The given GNNSubNet object contains the dataset
+	:param int		 n_splits:	 	The number of splits for k-fold cross validation
+	:param int		random_seed:	Seed for random shuffling
+	:return list:					A list of object pairs [gnn_train, gnn_test], objects are of type GNNSubNet
+	"""
+
+	gnn_subnets: list = []
+
+	dataset_list = copy.deepcopy(gnnsubnet.dataset)
+	random.seed(random_seed)
+	random.shuffle(dataset_list)
+
+	kf = KFold(n_splits=n_splits)
+	for train, test in kf.split(dataset_list):
+		gnn_train: GNNSubNet = copy.deepcopy(gnnsubnet)
+		gnn_test: GNNSubNet = copy.deepcopy(gnnsubnet)
+		gnn_train.dataset = [dataset_list[t] for t in train]
+		gnn_test.dataset = [dataset_list[t] for t in test]
+		gnn_train.true_class = np.array([gnn_train.dataset[t].y for t in range(len(gnn_train.dataset))])
+		gnn_test.true_class = np.array([gnn_test.dataset[t].y for t in range(len(gnn_test.dataset))])
+		gnn_subnets.append([gnn_train, gnn_test])
 
 	return gnn_subnets
 

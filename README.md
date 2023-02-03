@@ -209,7 +209,9 @@ print("NMI of ensemble classifier:", nmi)
 
 
 ```
-
+### Example 2a: Protein-Protein Interaction (PPI) network data, k-fold cross validation
+The example is in *./run_Ens_k_fold_cv.py*. The aim is to estimate the ensemble 
+model utilizing k-fold cross validation.
 # Federated Ensemble Learning with Ensemble-GNN
 
 ## Method 1
@@ -371,6 +373,13 @@ for party in range(0, len(learned_ensembles)):
     print("# Party %d model performance" % (party+1))
     print(", ".join(["%s: %.3f" % (c[0], c[1](test.true_class, pn_predicted_class)) for c in scores]))
 ```
+
+### Example 4b: Example code for multiple parties with several Monte Carlo rounds
+
+The example is in *./run_Ens_fed_monte_carlo.py*. The aim of this example is to estimate 
+the performance of 
+- local models (parties)
+- global federated model on the test data of local models
 
 ## Method 2 (in progress ...)
 
