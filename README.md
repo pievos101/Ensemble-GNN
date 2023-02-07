@@ -3,14 +3,16 @@
 </p>
 
 # Ensemble learning with graph neural networks for disease module discovery
-
+The aim of this branch is to run computational experiments to estimate the performance of the package. 
+Please see **Examples 2a, 2b, 4b**.
 ## Installation
 
-The GNN-Subnet package is required
+The GNN-Subnet package is required, but there is no need to install since the package with the 
+latest updates is also present in this branch (./GNNSubNet folder).
 
 https://github.com/pievos101/GNN-SubNet
 
-To install GNNSubNet run:
+To run experiments please install:
 
 ```python
 pip install torch==1.11.0
@@ -18,9 +20,6 @@ pip install torchvision==0.12.0
 pip install torch-geometric==2.0.4
 pip install torch-scatter==2.0.9
 pip install torch-sparse==0.6.13
-
-# to install GNNSubNet from source (cloned GitHub repo) run:
-pip install GNN-SubNet/
 ```
 Preferred versions are: torch==1.11.0, torchvision==0.12.0, torch-geometric==2.0.4, torch-scatter==2.0.9, and torch-sparse==0.6.13.
 
@@ -209,9 +208,16 @@ print("NMI of ensemble classifier:", nmi)
 
 
 ```
-### Example 2a: Protein-Protein Interaction (PPI) network data, k-fold cross validation
-The example is in *./run_Ens_k_fold_cv.py*. The aim is to estimate the ensemble 
-model utilizing k-fold cross validation.
+### Example 2a: Performance estimation of Ensemble-GNN, k-fold cross validation. Protein-Protein Interaction (PPI) network data.
+The example is in *./run_Ens_k_fold_cv.py*. The aim is to estimate the Ensemble-GNN method
+ utilizing k-fold cross validation.
+
+### Example 2b: Performance estimation of GNNSubNet. Protein-Protein Interaction (PPI) network data.
+The example is in *./run_GNN_k_fold_cv.py*. The aim is to estimate the GNNSubNet 
+method utilizing k-fold cross validation.
+
+
+
 # Federated Ensemble Learning with Ensemble-GNN
 
 ## Method 1
@@ -374,9 +380,9 @@ for party in range(0, len(learned_ensembles)):
     print(", ".join(["%s: %.3f" % (c[0], c[1](test.true_class, pn_predicted_class)) for c in scores]))
 ```
 
-### Example 4b: Example code for multiple parties with several Monte Carlo rounds
+### Example 4b: Performance estimation of Ensemble-GNN in a federated setting, several Monte Carlo rounds. Example code for multiple parties. 
 
-The example is in *./run_Ens_fed_monte_carlo.py*. The aim of this example is to estimate 
+The example is in *./run_Ens_fed_monte_carlo.py*. Please use this example with the version of the GNNSubNet package supplied in this branch (*./GNNSubNet* folder). The aim of this example is to estimate 
 the performance of 
 - local models (parties)
 - global federated model on the test data of local models

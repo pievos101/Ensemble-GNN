@@ -17,31 +17,31 @@ RANDOM_SEED: int = 800
 
 #
 # location of the files
-loc   = "/sybig/home/hch/FairPact/python-code/GNN-SubNet/TCGA/"
+# loc   = "/sybig/home/hch/FairPact/python-code/GNN-SubNet/TCGA/"
 # PPI network
-ppi   = f'{loc}/KIDNEY_RANDOM_PPI.txt'
+# ppi   = f'{loc}/KIDNEY_RANDOM_PPI.txt'
 # single-omic features
-feats = [f'{loc}/KIDNEY_RANDOM_mRNA_FEATURES.txt']
+# feats = [f'{loc}/KIDNEY_RANDOM_mRNA_FEATURES.txt']
 # multi-omic features
 # feats = [f'{loc}/KIDNEY_RANDOM_mRNA_FEATURES.txt', f'{loc}/KIDNEY_RANDOM_Methy_FEATURES.txt']
 # outcome class
-targ  = f'{loc}/KIDNEY_RANDOM_TARGET.txt'
+# targ  = f'{loc}/KIDNEY_RANDOM_TARGET.txt'
 
 # location of the files
-# loc   = "/sybig/home/hch/FairPact/python-code/Ensemble-GNN/datasets/TCGA-BRCA/"
+loc   = "/sybig/home/hch/FairPact/python-code/Ensemble-GNN/datasets/TCGA-BRCA/"
 # # PPI network
-# ppi   = f'{loc}/HRPD_brca_subtypes.csv'
+ppi   = f'{loc}/HRPD_brca_subtypes.csv'
 # # single-omic features
 # #feats = [f'{loc}/KIDNEY_RANDOM_Methy_FEATURES.txt']
 # # multi-omic features
-# feats = [f'{loc}/GE_brca_subtypes.csv']
+feats = [f'{loc}/GE_brca_subtypes.csv']
 # # outcome class
-# targ  = f'{loc}/target_brca_subtypes.csv'
+targ  = f'{loc}/binary_target_brca_subtypes.csv'
 
 
 # Number of parties
 parties: int = 3
-rounds: int = 4
+rounds: int = 5
 
 # Split data equaliy with split_n and train single models
 avg_local_performance: list = []
@@ -49,7 +49,8 @@ avg_ensemble_performance: list = []
 
 # For reproducibility of the data splits
 random.seed(RANDOM_SEED)
-random_seeds: list = random.sample(range(100, 999), 2*rounds)
+random_seeds_train_test: list = random.sample(range(100, 999), parties)
+random_seeds_rounds: list = random.sample(range(100, 999), rounds)
 
 start = time.time()
 
@@ -64,14 +65,15 @@ for i in range(0, rounds):
     print("# Round %d" % (i+1) )
 
     # Load the multi-omics data
-    g = gnn.GNNSubNet(loc, ppi, feats, targ)
+    g = gnn.GNNSubNet(loc, ppi, feats, targ, normalize=False)
     print("## Total dataset length %d" % len(g.dataset))
 
     # Now each client learns his own ensemble
-    for party in egnn.split_n(g, parties, random_seed=random_seeds[2*counter]): # 0, 2, 4
+    participants = egnn.split_n(g, parties, random_seed=random_seeds_rounds[i])
+    for party in participants: # 0, 2, 4
         counter += 1
         print("## Training party %d" % counter)
-        g_train, g_test = egnn.split(party, 0.8, random_seed=random_seeds[2*counter - 1])  # 1, 3, 5
+        g_train, g_test = egnn.split(party, 0.8, random_seed=random_seeds_train_test[counter-1])
         print("### local train: %d, local test: %d" % (len(g_train.dataset), len(g_test.dataset)))
         pn = egnn.ensemble(g_train, niter=1)
         pn.train()

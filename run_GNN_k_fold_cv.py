@@ -16,27 +16,27 @@ from sklearn.metrics import matthews_corrcoef
 RANDOM_SEED: int = 800
 
 
-# # location of the files
-# loc   = "/sybig/home/hch/FairPact/python-code/GNN-SubNet/TCGA/"
-# # PPI network
-# ppi   = f'{loc}/KIDNEY_RANDOM_PPI.txt'
-# # single-omic features
-# feats = [f'{loc}/KIDNEY_RANDOM_mRNA_FEATURES.txt']
-# # multi-omic features
-# # feats = [f'{loc}/KIDNEY_RANDOM_mRNA_FEATURES.txt', f'{loc}/KIDNEY_RANDOM_Methy_FEATURES.txt']
-# # outcome class
-# targ  = f'{loc}/KIDNEY_RANDOM_TARGET.txt'
-
 # location of the files
-loc   = "/sybig/home/hch/FairPact/python-code/Ensemble-GNN/datasets/TCGA-BRCA/"
+loc   = "/sybig/home/hch/FairPact/python-code/GNN-SubNet/TCGA/"
 # PPI network
-ppi   = f'{loc}/HRPD_brca_subtypes.csv'
+ppi   = f'{loc}/KIDNEY_RANDOM_PPI.txt'
 # single-omic features
-#feats = [f'{loc}/KIDNEY_RANDOM_Methy_FEATURES.txt']
+feats = [f'{loc}/KIDNEY_RANDOM_mRNA_FEATURES.txt']
 # multi-omic features
-feats = [f'{loc}/GE_brca_subtypes.csv']
+# feats = [f'{loc}/KIDNEY_RANDOM_mRNA_FEATURES.txt', f'{loc}/KIDNEY_RANDOM_Methy_FEATURES.txt']
 # outcome class
-targ  = f'{loc}/binary_target_brca_subtypes.csv'
+targ  = f'{loc}/KIDNEY_RANDOM_TARGET.txt'
+
+# # location of the files
+# loc   = "/sybig/home/hch/FairPact/python-code/Ensemble-GNN/datasets/TCGA-BRCA/"
+# # PPI network
+# ppi   = f'{loc}/HRPD_brca_subtypes.csv'
+# # single-omic features
+# #feats = [f'{loc}/KIDNEY_RANDOM_Methy_FEATURES.txt']
+# # multi-omic features
+# feats = [f'{loc}/GE_brca_subtypes.csv']
+# # outcome class
+# targ  = f'{loc}/binary_target_brca_subtypes.csv'
 
 
 # Number of splits for K-fold cross validation
@@ -52,7 +52,7 @@ avg_ensemble_performance: list = []
 
 start = time.time()
 # Load the multi-omics data
-g = gnn.GNNSubNet(loc, ppi, feats, targ, normalize=False)
+g = gnn.GNNSubNet(loc, ppi, feats, targ) #, normalize=False)
 
 # Get some general information about the data dimension
 # g.summary()
@@ -64,10 +64,9 @@ model_pairs: list = egnn.split_n_fold_cv(g, n_splits=splits, random_seed=RANDOM_
 
 for g_train, g_test in model_pairs:
     counter += 1
-    pn = egnn.ensemble(g_train, niter=1)
     print("## Training fold %d" % counter)
-    pn.train()
-    predicted_local_classes = pn.predict(g_test)
+    g_train.train()
+    predicted_local_classes = g_train.predict(g_test)
     print("### Balanced accuracy: fold %d score: %.3f" % (counter, balanced_accuracy_score(g_test.true_class, predicted_local_classes)))
     # print("## Finished training fold %d" % counter)
     # Stores the test data and single client models into lists
