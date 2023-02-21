@@ -109,7 +109,25 @@ class GNNSubNet(object):
         #for i in self.__dict__:
         #    print('%s: %s' % (i, self.__dict__[i]))
 
-    def train(self, epoch_nr = 10, shuffle=True, weights=False):
+    def create_mini_batches(s2v_train_dataset, batch_size):
+        mini_batches = []
+        data = s2v_train_dataset
+        random.shuffle(data)
+
+        n_minibatches = len(data) // batch_size
+        i = 0
+
+        # mini_batches = [data[i * batch_size:(i + 1) * batch_size]]
+        for i in range(n_minibatches):
+            mini_batch = data[i * batch_size:(i + 1) * batch_size]
+            mini_batches.append(mini_batch)
+        if len(data) % batch_size != 0:
+            mini_batch = data[i * batch_size:len(data)]
+            mini_batches.append(mini_batch)
+        return mini_batches
+
+
+    def train(self, epoch_nr = 24, shuffle=True, weights=False):
         """
         Train the GNN model on the data provided during initialisation.
         """
@@ -181,6 +199,16 @@ class GNNSubNet(object):
         s2v_train_dataset = convert_to_s2vgraph(train_dataset_list)
         s2v_test_dataset  = convert_to_s2vgraph(test_dataset_list)
 
+        import pickle
+        # pickle.dump(s2v_train_dataset, open("./docs/train_brca.p", "wb"))
+        # pickle.dump(s2v_test_dataset, open("./docs/test_brca.p", "wb"))
+
+        # s2v_train_dataset = pickle.load(open("./docs/train.p", "rb"))
+        # s2v_test_dataset = pickle.load(open("./docs/test.p", "rb"))
+
+        # s2v_train_dataset = pickle.load(open("./docs/train_brca.p", "rb"))
+        # s2v_test_dataset = pickle.load(open("./docs/test_brca.p", "rb"))
+
 
         # TRAIN GNN -------------------------------------------------- #
         #count = 0
@@ -204,8 +232,9 @@ class GNNSubNet(object):
         input_dim = no_of_features
         n_classes = 2
 
-        model = GraphCNN(5, 2, input_dim, 32, n_classes, 0.5, True, 'sum1', 'sum', 0)
-        opt = torch.optim.Adam(model.parameters(), lr = 0.01)
+        # TODO: put hyperparameters as external parameters
+        model = GraphCNN(5, 2, input_dim, 32, n_classes, 0, True, 'sum1', 'sum', 0)
+        opt = torch.optim.Adam(model.parameters(), lr=0.01) #, weight_decay=0.11) # 25 epochs for KIRC
 
         load_model = False
         if load_model:
@@ -214,35 +243,44 @@ class GNNSubNet(object):
             opt = checkpoint['optimizer']
 
         model.train()
-        min_loss = 50
-        best_model = GraphCNN(5, 3, input_dim, 32, n_classes, 0.5, True, 'sum1', 'sum', 0)
-        min_val_loss = 150
-        n_epochs_stop = 5
-        epochs_no_improve = 0
-        steps_per_epoch = 35
 
+        # TODO: put hyperparameters as external parameters
+        min_loss = 50
+        best_model = GraphCNN(5, 2, input_dim, 32, n_classes, 0, True, 'sum1', 'sum', 0)
+        min_val_loss = 15000000 # need large number for initialization of min_val_loss with the first epoch
+        n_epochs_stop = 50 # to stop training if no improvements in n_epochs_stop epochs
+        epochs_no_improve = 0
+        batch_size = 16
+
+        # steps_per_epoch = 10
+        # print("training process")
+        # print(type(s2v_train_dataset))
         for epoch in range(epoch_nr):
             model.train()
-            pbar = tqdm(range(steps_per_epoch), unit='batch', disable=not self.verbose)
-            epoch_loss = 0
-            for pos in pbar:
-                selected_idx = np.random.permutation(len(s2v_train_dataset))[:32]
+            mini_batches = GNNSubNet.create_mini_batches(s2v_train_dataset, batch_size)
 
-                batch_graph = [s2v_train_dataset[idx] for idx in selected_idx]
+            # print("\tlen(mini_batches)", len(mini_batches))
+
+            mini_batches_pbar = tqdm(mini_batches, unit='batch', disable=not self.verbose)
+            epoch_loss = 0
+
+            for batch_graph in mini_batches_pbar:
+                # selected_idx = np.random.permutation(len(s2v_train_dataset))[:32]
+                # batch_graph = [s2v_train_dataset[idx] for idx in selected_idx]
                 logits = model(batch_graph)
                 labels = torch.LongTensor([graph.label for graph in batch_graph])
-                if use_weights:
-                    loss = nn.CrossEntropyLoss(weight=weight)(logits,labels)
-                else:
-                    loss = nn.CrossEntropyLoss()(logits,labels)
-
+                # if use_weights:
+                #     loss = nn.CrossEntropyLoss(weight=weight)(logits,labels)
+                # else:
+                #     loss = nn.CrossEntropyLoss()(logits,labels)
+                loss = nn.CrossEntropyLoss()(logits, labels)
                 opt.zero_grad()
                 loss.backward()
                 opt.step()
 
                 epoch_loss += loss.detach().item()
 
-            epoch_loss /= steps_per_epoch
+            epoch_loss /= len(mini_batches)
             model.eval()
             output = pass_data_iteratively(model, s2v_train_dataset)
             predicted_class = output.max(1, keepdim=True)[1]
@@ -254,7 +292,7 @@ class GNNSubNet(object):
             if self.verbose:
                 print(f"# Train Acc {acc_train:.4f}")
 
-            pbar.set_description('epoch: %d' % (epoch))
+            mini_batches_pbar.set_description('epoch: %d' % (epoch))
             val_loss = 0
             output = pass_data_iteratively(model, s2v_test_dataset)
 
@@ -294,7 +332,7 @@ class GNNSubNet(object):
 
         test_loss = 0
 
-        model.load_state_dict(best_model.state_dict())
+        model.load_state_dict(best_model.state_dict(), strict=False)
 
         output = pass_data_iteratively(model, s2v_test_dataset)
         predicted_class = output.max(1, keepdim=True)[1]

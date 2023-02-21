@@ -16,27 +16,27 @@ from sklearn.metrics import matthews_corrcoef
 RANDOM_SEED: int = 800
 
 
-# location of the files
-loc   = "/sybig/home/hch/FairPact/python-code/GNN-SubNet/TCGA/"
-# PPI network
-ppi   = f'{loc}/KIDNEY_RANDOM_PPI.txt'
-# single-omic features
-feats = [f'{loc}/KIDNEY_RANDOM_mRNA_FEATURES.txt']
-# multi-omic features
-# feats = [f'{loc}/KIDNEY_RANDOM_mRNA_FEATURES.txt', f'{loc}/KIDNEY_RANDOM_Methy_FEATURES.txt']
-# outcome class
-targ  = f'{loc}/KIDNEY_RANDOM_TARGET.txt'
-
 # # location of the files
-# loc   = "/sybig/home/hch/FairPact/python-code/Ensemble-GNN/datasets/TCGA-BRCA/"
+# loc   = "/sybig/home/hch/FairPact/python-code/GNN-SubNet/TCGA/"
 # # PPI network
-# ppi   = f'{loc}/HRPD_brca_subtypes.csv'
+# ppi   = f'{loc}/KIDNEY_RANDOM_PPI.txt'
 # # single-omic features
-# #feats = [f'{loc}/KIDNEY_RANDOM_Methy_FEATURES.txt']
+# feats = [f'{loc}/KIDNEY_RANDOM_mRNA_FEATURES.txt']
 # # multi-omic features
-# feats = [f'{loc}/GE_brca_subtypes.csv']
+# # feats = [f'{loc}/KIDNEY_RANDOM_mRNA_FEATURES.txt', f'{loc}/KIDNEY_RANDOM_Methy_FEATURES.txt']
 # # outcome class
-# targ  = f'{loc}/binary_target_brca_subtypes.csv'
+# targ  = f'{loc}/KIDNEY_RANDOM_TARGET.txt'
+
+# location of the files
+loc   = "/sybig/home/hch/FairPact/python-code/Ensemble-GNN/datasets/TCGA-BRCA/"
+# PPI network
+ppi   = f'{loc}/HRPD_brca_subtypes.csv'
+# single-omic features
+#feats = [f'{loc}/KIDNEY_RANDOM_Methy_FEATURES.txt']
+# multi-omic features
+feats = [f'{loc}/GE_brca_subtypes.csv']
+# outcome class
+targ  = f'{loc}/binary_target_brca_subtypes.csv'
 
 
 # Number of splits for K-fold cross validation
@@ -52,7 +52,7 @@ avg_ensemble_performance: list = []
 
 start = time.time()
 # Load the multi-omics data
-g = gnn.GNNSubNet(loc, ppi, feats, targ) #, normalize=False)
+g = gnn.GNNSubNet(loc, ppi, feats, targ, verbose=2, normalize=False)
 
 # Get some general information about the data dimension
 # g.summary()
