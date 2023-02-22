@@ -25,14 +25,14 @@ with open('README.md', 'r') as readme:
 
 setup(
     name='ensemble_gnn',
-    version='1.0.0',
+    version='1.0.1',
     author='Bastian Pfeifer',
     license='MIT',
     author_email='bastian.pfeifer@medunigraz.at',
     description='Ensemble learning with graph neural networks',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://github.com/pievos101/Ensemble_GNN',
+    url='https://github.com/pievos101/Ensemble-GNN',
     keywords='graph neural networks, ensemble learning',
     python_requires='>=3.6',
     # package_dir = {"": "src"}

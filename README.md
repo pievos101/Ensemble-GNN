@@ -52,7 +52,7 @@ g = gnn.GNNSubNet(loc, ppi, feats, targ, normalize=False)
 g.summary()
 
 # train-test split: 80-20 
-g_train, g_test = egnn.train_test_split(g)
+g_train, g_test = egnn.split(g)
 
 # initialization: infer subnetworks and build ensemble
 e1 = egnn.ensemble(g_train, niter=1) # niter=10 is recommended
@@ -154,7 +154,7 @@ e1.modules_gene_names
 e1.ensemble[0].dataset[0].edge_index
 
 # grow the ensemble (greedy step)
-e1.grow(20)
+# e1.grow(20) [optional]
 
 # check the accuracy
 e1.train_accuracy
