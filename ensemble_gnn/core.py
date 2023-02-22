@@ -8,3 +8,4 @@ from .ensemble import ensemble
 from .utils import split
 from .utils import split_n
 from .utils import aggregate
+from .utils import Benchmarker

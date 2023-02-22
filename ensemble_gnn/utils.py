@@ -84,3 +84,127 @@ def aggregate(models_list: list):
 		for yy in range(len(e)):
 			e_all.ensemble.append(e[yy])
 	return e_all
+
+
+class Benchmarker:
+	from sklearn.metrics import accuracy_score, balanced_accuracy_score, f1_score, auc, matthews_corrcoef
+	"""
+	Manages average score values over multiple parties and multiple iterations(rounds)
+	"""
+
+	scores = [
+		("BalAcc", balanced_accuracy_score),
+		("MCC", matthews_corrcoef),
+		("F1", f1_score)
+	]
+	"""
+	Predefined scoring methods
+	"""
+
+	def __init__(self, party: int = 1, rounds: int = 3, federated: bool = False, verbose: int = 0, scorer: list = []):
+		"""
+		Initialize the Benchmarker by creating a bucket data structure to store all single score values
+		:param 	int		party: 		Number of parties
+		:param	int		rounds: 	Number of iterations/rounds
+		:param	bool	federated: 	True if a global and local model are expected
+		:param	int		verbose: 	Level of verbose logs. 0 = mostly silent
+		:param	list	scorer:		Additional scoring methods. List of tuples with abbrevation and scoring function
+		"""
+		self.party: int  = party
+		self.federated: bool = federated
+		self.rounds: int = rounds
+		self.verbose: int = verbose
+
+		if type(scorer) == list and len(scorer):
+			for sc in scorer:
+				if len(sc) == 2 and type(sc[0]) == str and callable(sc[1]):
+					self.scores.append(sc)
+
+		self.bucket: dict = self.__create_bucket()
+
+	def __create_bucket(self) -> dict:
+		"""
+		Preparing data structure to store all values. Scores * Rounds * Parties
+		"""
+		bucket: dict = {"avg_local": {}, "scores": { "local": {}}}
+		[bucket["avg_local"].update({i[0]: []}) for i in self.scores]
+		[bucket["scores"]["local"].update({i: {}}) for i in range(0, self.rounds)]
+
+		if self.federated:
+			bucket.update({"avg_federated": {}})
+			bucket["scores"].update({"federated": {}})
+			[bucket["avg_federated"].update({i[0]: []}) for i in self.scores]
+			[bucket["scores"]["federated"].update({i: {}}) for i in range(0, self.rounds)]
+
+		for round in range(0, self.rounds):
+			[bucket["scores"]["local"][round].update({i[0]: []}) for i in self.scores]
+			if self.federated:
+				[bucket["scores"]["federated"][round].update({i[0]: []}) for i in self.scores]
+
+		return bucket
+
+	def calculate_round_average(self, round: int = 0):
+		"""
+		Compute each round average. Necessary to execute after finishing a interation/round
+		:param	int	round:	The current round number
+		"""
+		for score in self.scores:
+			self.bucket["avg_local"][score[0]].append(sum(self.bucket["scores"]["local"][round][score[0]])/len(self.bucket["scores"]["local"][round][score[0]]))
+			if self.federated:
+				self.bucket["avg_federated"][score[0]].append(sum(self.bucket["scores"]["federated"][round][score[0]])/len(self.bucket["scores"]["federated"][round][score[0]]))
+
+	def set_scores(self, y_true, y_pred, round: int = 0, federated: bool = False):
+		"""
+		Stores the score of the given values
+		:param			y_true:		the truth y values
+		:param			y_pred:		the predicted y values
+		:param	int		round:		The current round number
+		:param	bool	federated:	True for global model
+		"""
+		bucket_class: str = "federated" if federated else "local"
+		for score in self.scores:
+			self.bucket["scores"][bucket_class][round][score[0]].append(score[1](y_true, y_pred))
+
+	def get_single_results(self, round: int = 0, federated: bool = False) -> dict:
+		"""
+		Returns all score numbers of a specific round
+		:param	int		round:		The current round number
+		:param	bool	federated:	True for global model
+		:return	dict				The dictionary with all values for a single round
+		"""
+		bucket_class: str = "federated" if federated else "local"
+		return self.bucket["scores"][bucket_class][round]
+
+	def get_avg_score(self, scorer: str, federated: bool = False) -> float:
+		"""
+		Returns the total averaged value for a specific scoring method
+		:param	str		scorer:		The scoring name
+		:param	bool	federated:	True for global model
+		"""
+		bucket_class: str = "avg_federated" if federated else "avg_local"
+		return sum(self.bucket[bucket_class][scorer])/len(self.bucket[bucket_class][scorer])
+
+	def get_avg_round(self, round: int = 0):
+		"""
+		Prints the average of all scoring methods from a round
+		:param	int	round: The current round number
+		"""
+		print("# Round %d performance" % round+1)
+		if self.federated and self.verbose:
+			for score in self.scores:
+				print("## %s: local model %.3f and global model %.3f" % (score[0], self.bucket["avg_local"][round], self.bucket["avg_federated"][round]))
+		elif self.verbose:
+			for score in self.scores:
+				print("## %s: %.3f" % (score[0], self.bucket["avg_local"][round]))
+
+	def report(self):
+		"""
+		Prints all averages
+		"""
+		print("# Total performance after %d rounds" % self.rounds)
+		if self.federated:
+			for score in self.scores:
+				print("# %s: local model %.3f and global model %.3f" % (score[0], self.get_avg_score(score[0]), self.get_avg_score(score[0], federated=True)))
+		else:
+			for score in self.scores:
+				print("# %s: %.3f" % (score[0], self.get_avg_score(score[0])))
