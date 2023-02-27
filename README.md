@@ -79,7 +79,7 @@ e1.ensemble[0].dataset[0].edge_index
 e1.train_accuracy
 
 # train again with a different train-validation split
-e1.train()
+# e1.train()
 
 # check the accuracy
 e1.train_accuracy
@@ -154,7 +154,7 @@ e1.modules_gene_names
 e1.ensemble[0].dataset[0].edge_index
 
 # grow the ensemble (greedy step)
-# e1.grow(20) [optional]
+# e1.grow(10) [optional]
 
 # check the accuracy
 e1.train_accuracy
