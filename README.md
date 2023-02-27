@@ -160,7 +160,7 @@ e1.ensemble[0].dataset[0].edge_index
 e1.train_accuracy
 
 # train again with a different train-validation split
-e1.train()
+# e1.train()
 
 # check the accuracy
 e1.train_accuracy
