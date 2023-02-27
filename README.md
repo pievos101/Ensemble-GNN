@@ -51,13 +51,8 @@ g = gnn.GNNSubNet(loc, ppi, feats, targ, normalize=False)
 # Get some general information about the data dimension
 g.summary()
 
-<<<<<<< HEAD
-# train-test split: 80-20 
-g_train, g_test = egnn.split(g)
-=======
 # train-test split: 80-20
 g_train, g_test = egnn.split(g, 0.8)
->>>>>>> b8a9108b04e0ae04207f9a0bc9e366654c307dc7
 
 # initialization: infer subnetworks and build ensemble
 e1 = egnn.ensemble(g_train, niter=1) # niter=10 is recommended

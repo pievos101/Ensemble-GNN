@@ -1,9 +1,6 @@
 # utils
 from torch_geometric.data.data import Data
-<<<<<<< HEAD
 from sklearn.model_selection import KFold
-=======
->>>>>>> b8a9108b04e0ae04207f9a0bc9e366654c307dc7
 from GNNSubNet import GNNSubNet
 from GNNSubNet import GNNSubNet as gnn
 import ensemble_gnn as egnn
@@ -77,7 +74,6 @@ def split_n(gnnsubnet: GNNSubNet, parties: int = 2, proportions: list = None, ra
 	return gnn_subnets
 
 
-<<<<<<< HEAD
 def split_n_fold_cv(gnnsubnet: GNNSubNet, n_splits: int = 3, random_seed: int = 42) -> list:
 	"""
 	Split dataset from GNNSubnet into fractions for n_splits-fold crossvalidation
@@ -106,8 +102,6 @@ def split_n_fold_cv(gnnsubnet: GNNSubNet, n_splits: int = 3, random_seed: int = 
 	return gnn_subnets
 
 
-=======
->>>>>>> b8a9108b04e0ae04207f9a0bc9e366654c307dc7
 def aggregate(models_list: list):
 	"""
 	Aggregate multiple graphs to an ensemble
@@ -118,8 +112,4 @@ def aggregate(models_list: list):
 		e = models_list[xx].send_model()
 		for yy in range(len(e)):
 			e_all.ensemble.append(e[yy])
-<<<<<<< HEAD
 	return e_all
-=======
-	return e_all
->>>>>>> b8a9108b04e0ae04207f9a0bc9e366654c307dc7
