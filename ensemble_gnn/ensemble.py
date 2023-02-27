@@ -29,17 +29,7 @@ class ensemble(object):
         self.modules_gene_names = list()
 
         # train
-        if method=="chebconv":
-            gnnsubnet.train_chebconv(epoch_nr = epoch_nr)
-            gnnsubnet.classifier="chebconv"
-
-        if method=="graphcnn":
-            gnnsubnet.train_graphcnn(epoch_nr = epoch_nr)
-            gnnsubnet.classifier="graphcnn"
-
-        if method=="graphcheb":
-            gnnsubnet.train_graphcheb(epoch_nr = epoch_nr)
-            gnnsubnet.classifier="graphcheb"
+        gnnsubnet.train(epoch_nr=epoch_nr, method=method)
 
         # explainer
         gnnsubnet.explain(n_runs=niter, classifier=method)
@@ -134,7 +124,7 @@ class ensemble(object):
         acc = list()
 
         for xx in range(len(self.ensemble)):
-            self.ensemble[xx].train()
+            self.ensemble[xx].train(method=self.ensemble[xx].classifier)
             acc.append(self.ensemble[xx].accuracy)
 
         self.train_accuracy = acc
