@@ -9,7 +9,7 @@ class ensemble(object):
     The class ensemble represents the main user API for the
     Ensemble_GNN package.
     """
-    def __init__(self, gnnsubnet=None, niter: int = 1, verbose: int = 0) -> None:
+    def __init__(self, gnnsubnet=None, method="chebconv", epoch_nr: int = 20, niter: int = 1, verbose: int = 0) -> None:
 
         self.id = None
         self.ensemble  = list()
@@ -28,12 +28,21 @@ class ensemble(object):
         self.gene_names = gnnsubnet.gene_names
         self.modules_gene_names = list()
 
-
         # train
-        gnnsubnet.train()
+        if method=="chebconv":
+            gnnsubnet.train_chebconv(epoch_nr = epoch_nr)
+            gnnsubnet.classifier="chebconv"
+
+        if method=="graphcnn":
+            gnnsubnet.train_graphcnn(epoch_nr = epoch_nr)
+            gnnsubnet.classifier="graphcnn"
+
+        if method=="graphcheb":
+            gnnsubnet.train_graphcheb(epoch_nr = epoch_nr)
+            gnnsubnet.classifier="graphcheb"
 
         # explainer
-        gnnsubnet.explain(niter)
+        gnnsubnet.explain(n_runs=niter, classifier=method)
 
         # get subnets and build ensemble classifier
         self.modules = gnnsubnet.modules
@@ -113,6 +122,7 @@ class ensemble(object):
             self.modules_gene_names.append(self.gene_names[mod_sub])
             self.ensemble[xx].modules = mod_sub
             self.ensemble[xx].model = None
+            self.ensemble[xx].classifier = method
 
     def add(self, gnnsubnet):
 
