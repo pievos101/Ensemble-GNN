@@ -17,24 +17,24 @@ RANDOM_SEED: int = 800
 
 
 # location of the files
-loc   = "/home/bastian/GitHub/GNN-SubNet/TCGA"
+#loc   = "/home/bastian/GitHub/GNN-SubNet/TCGA"
 # PPI network
-ppi   = f'{loc}/KIDNEY_RANDOM_PPI.txt'
+#ppi   = f'{loc}/KIDNEY_RANDOM_PPI.txt'
 # single-omic features
-feats = [f'{loc}/KIDNEY_RANDOM_mRNA_FEATURES.txt']
+#feats = [f'{loc}/KIDNEY_RANDOM_mRNA_FEATURES.txt']
 # multi-omic features
 #feats = [f'{loc}/KIDNEY_RANDOM_mRNA_FEATURES.txt', f'{loc}/KIDNEY_RANDOM_Methy_FEATURES.txt']
 # outcome class
-targ  = f'{loc}/KIDNEY_RANDOM_TARGET.txt'
+#targ  = f'{loc}/KIDNEY_RANDOM_TARGET.txt'
 
 # location of the files
-#loc   = "/home/bastian/TCGA-BRCA"
+loc   = "/home/bastian/TCGA-BRCA"
 # PPI network
-#ppi   = f'{loc}/HRPD_brca_subtypes.csv'
+ppi   = f'{loc}/HRPD_brca_subtypes.csv'
 # single-omic features
-#feats = [f'{loc}/GE_brca_subtypes.csv']
+feats = [f'{loc}/GE_brca_subtypes.csv']
 # outcome class
-#targ  = f'{loc}/binary_target_brca_subtypes.csv'
+targ  = f'{loc}/binary_target_brca_subtypes.csv'
 
 
 # Number of splits for K-fold cross validation
@@ -62,7 +62,7 @@ model_pairs: list = egnn.split_n_fold_cv(g, n_splits=splits, random_seed=RANDOM_
 
 for g_train, g_test in model_pairs:
     counter += 1
-    pn = egnn.ensemble(g_train, niter=1, method="chebconv", epoch_nr=35)
+    pn = egnn.ensemble(g_train, niter=1, epoch_nr=35)
     print("## Training fold %d" % counter)
     pn.train()
     #pn.grow(100)
