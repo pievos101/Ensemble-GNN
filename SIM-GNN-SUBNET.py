@@ -50,7 +50,7 @@ avg_ensemble_performance: list = []
 
 start = time.time()
 # Load the multi-omics data
-g = gnn.GNNSubNet(loc, ppi, feats, targ, normalize=False)
+g = gnn.GNNSubNet(loc, ppi, feats, targ, normalize=True)
 
 # Get some general information about the data dimension
 # g.summary()
