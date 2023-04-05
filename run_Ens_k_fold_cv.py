@@ -16,7 +16,7 @@ from sklearn.metrics import matthews_corrcoef
 RANDOM_SEED: int = 800
 
 
-# # location of the files
+# location of the files
 # loc   = "/sybig/home/hch/FairPact/python-code/GNN-SubNet/TCGA/"
 # # PPI network
 # ppi   = f'{loc}/KIDNEY_RANDOM_PPI.txt'
@@ -54,6 +54,8 @@ start = time.time()
 # Load the multi-omics data
 g = gnn.GNNSubNet(loc, ppi, feats, targ, normalize=False)
 
+print(f"The length of the initial dataset: {len(g.dataset)}")
+
 # Get some general information about the data dimension
 # g.summary()
 
@@ -64,12 +66,15 @@ model_pairs: list = egnn.split_n_fold_cv(g, n_splits=splits, random_seed=RANDOM_
 
 for g_train, g_test in model_pairs:
     counter += 1
-    pn = egnn.ensemble(g_train, niter=1)
     print("## Training fold %d" % counter)
-    pn.train()
+    print(f"## The length of the training dataset: {len(g_train.dataset)}")
+    pn = egnn.ensemble(g_train, niter=1, method="graphcheb", epoch_nr=60, verbose=1)
+    pn.train(epoch_nr=60) # training of ensembles
+    #pn.grow(100)
     predicted_local_classes = pn.predict(g_test)
     print("### Balanced accuracy: fold %d score: %.3f" % (counter, balanced_accuracy_score(g_test.true_class, predicted_local_classes)))
-    # print("## Finished training fold %d" % counter)
+    print("## Finished training fold %d" % counter)
+    print("")
     # Stores the test data and single client models into lists
     accuracy_single.append(balanced_accuracy_score(g_test.true_class, predicted_local_classes))
 

@@ -15,7 +15,7 @@ import torch
 
 def check_if_graph_is_connected(edge_index):
     if type(edge_index) == torch.Tensor:
-        edge_index = edge_index.numpy()
+        edge_index = edge_index.detach().cpu().numpy()
     s = list(copy.copy(edge_index[0]))
     t = list(copy.copy(edge_index[1]))
 

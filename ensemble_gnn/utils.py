@@ -29,9 +29,9 @@ def split(gnnsubnet: GNNSubNet, split: float = 0.8, random_seed: int = 42) -> tu
 	train_dataset_list: list = dataset_list[:train_set_len]
 	test_dataset_list: list  = dataset_list[train_set_len:]
 	gnn1_train.dataset = train_dataset_list
-	gnn1_train.true_class = np.array([train_dataset_list[xx].y for xx in range(len(train_dataset_list))])
+	gnn1_train.true_class = np.array([train_dataset_list[xx].y.detach().cpu() for xx in range(len(train_dataset_list))])
 	gnn2_test.dataset  = test_dataset_list
-	gnn2_test.true_class = np.array([test_dataset_list[xx].y for xx in range(len(test_dataset_list))])
+	gnn2_test.true_class = np.array([test_dataset_list[xx].y.detach().cpu() for xx in range(len(test_dataset_list))])
 
 	return gnn1_train, gnn2_test
 
@@ -67,7 +67,7 @@ def split_n(gnnsubnet: GNNSubNet, parties: int = 2, proportions: list = None, ra
 		# print("%d: %d:%d" % (p, counter, counter+ranges[p]))
 		gnn: GNNSubNet = copy.deepcopy(gnnsubnet)
 		gnn.dataset = dataset_list[counter:counter+ranges[p]]
-		gnn.true_class = np.array([gnn.dataset[t].y for t in range(len(gnn.dataset))])
+		gnn.true_class = np.array([gnn.dataset[t].y.detach().cpu() for t in range(len(gnn.dataset))])
 		counter += ranges[p]
 		gnn_subnets.append(gnn)
 
@@ -95,8 +95,8 @@ def split_n_fold_cv(gnnsubnet: GNNSubNet, n_splits: int = 3, random_seed: int = 
 		gnn_test: GNNSubNet = copy.deepcopy(gnnsubnet)
 		gnn_train.dataset = [dataset_list[t] for t in train]
 		gnn_test.dataset = [dataset_list[t] for t in test]
-		gnn_train.true_class = np.array([gnn_train.dataset[t].y for t in range(len(gnn_train.dataset))])
-		gnn_test.true_class = np.array([gnn_test.dataset[t].y for t in range(len(gnn_test.dataset))])
+		gnn_train.true_class = np.array([gnn_train.dataset[t].y.detach().cpu() for t in range(len(gnn_train.dataset))])
+		gnn_test.true_class = np.array([gnn_test.dataset[t].y.detach().cpu() for t in range(len(gnn_test.dataset))])
 		gnn_subnets.append([gnn_train, gnn_test])
 
 	return gnn_subnets

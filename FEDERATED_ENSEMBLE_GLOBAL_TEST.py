@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 
-"""This script is almost an original file "example_4_b.py" created by Roman Martin."""
-
-
 from GNNSubNet import GNNSubNet as gnn
 import ensemble_gnn as egnn
 import copy
@@ -13,21 +10,29 @@ from sklearn.metrics import balanced_accuracy_score
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import matthews_corrcoef
 
-RANDOM_SEED: int = 800
+RANDOM_SEED: int = 232100
 
 
 # location of the files
-# loc   = "/home/bastian/GitHub/GNN-SubNet/TCGA"
+#loc   = "/home/bastian/GitHub/GNN-SubNet/TCGA"
+# PPI network
+#ppi   = f'{loc}/KIDNEY_RANDOM_PPI.txt'
+# single-omic features
+#feats = [f'{loc}/KIDNEY_RANDOM_mRNA_FEATURES.txt']
+# multi-omic features
+#feats = [f'{loc}/KIDNEY_RANDOM_mRNA_FEATURES.txt', f'{loc}/KIDNEY_RANDOM_Methy_FEATURES.txt']
+# outcome class
+#targ  = f'{loc}/KIDNEY_RANDOM_TARGET.txt'
+
+
+# # location of the files
+# loc   = "/home/bastian/TCGA-BRCA"
 # # PPI network
-# ppi   = f'{loc}/KIDNEY_RANDOM_PPI.txt'
+# ppi   = f'{loc}/HRPD_brca_subtypes.csv'
 # # single-omic features
-# feats = [f'{loc}/KIDNEY_RANDOM_mRNA_FEATURES.txt']
-# # multi-omic features
-# #feats = [f'{loc}/KIDNEY_RANDOM_mRNA_FEATURES.txt', f'{loc}/KIDNEY_RANDOM_Methy_FEATURES.txt']
+# feats = [f'{loc}/GE_brca_subtypes.csv']
 # # outcome class
-# targ  = f'{loc}/KIDNEY_RANDOM_TARGET.txt'
-
-
+# targ  = f'{loc}/binary_target_brca_subtypes.csv'
 # location of the files
 loc   = "/sybig/home/hch/FairPact/python-code/Ensemble-GNN/datasets/TCGA-BRCA/"
 # PPI network
@@ -40,6 +45,7 @@ feats = [f'{loc}/GE_brca_subtypes.csv']
 targ  = f'{loc}/binary_target_brca_subtypes.csv'
 
 
+
 # Number of parties
 parties: int = 3
 rounds: int = 5
@@ -50,7 +56,7 @@ avg_ensemble_performance: list = []
 
 # For reproducibility of the data splits
 random.seed(RANDOM_SEED)
-random_seeds_train_test: list = random.sample(range(100, 999), parties)
+random_seeds_parties: list = random.sample(range(100, 999), rounds) # rounds is on purpose here
 random_seeds_rounds: list = random.sample(range(100, 999), rounds)
 
 start = time.time()
@@ -69,14 +75,17 @@ for i in range(0, rounds):
     g = gnn.GNNSubNet(loc, ppi, feats, targ, normalize=False)
     print("## Total dataset length %d" % len(g.dataset))
 
+    # Global test set
+    g_train, g_test = egnn.split(g, 0.8, random_seed=random_seeds_rounds[i])
+
     # Now each client learns his own ensemble
-    participants = egnn.split_n(g, parties, random_seed=random_seeds_rounds[i])
+    participants = egnn.split_n(g_train, parties, random_seed=random_seeds_parties[i])
+
     for party in participants: # 0, 2, 4
         counter += 1
         print("## Training party %d" % counter)
-        g_train, g_test = egnn.split(party, 0.8, random_seed=random_seeds_train_test[counter-1])
-        print("### local train: %d, local test: %d" % (len(g_train.dataset), len(g_test.dataset)))
-        pn = egnn.ensemble(g_train, niter=1, method="graphcheb", epoch_nr=60, verbose=1)
+        # print("### local train: %d, local test: %d" % (len(g_train.dataset), len(g_test.dataset)))
+        pn = egnn.ensemble(party, niter=1, method="graphcheb", epoch_nr=60, verbose=1)
         pn.train(epoch_nr=60)
         predicted_local_classes = pn.predict(g_test)
 
@@ -89,11 +98,8 @@ for i in range(0, rounds):
 
     # We are merging all ensembles together
     global_model = egnn.aggregate(learned_ensembles)
-
-    # Each client applies the ensembled model on his own test data
-    for party in range(0, len(learned_ensembles)):
-        predicted_ensemble_classes = global_model.predict(parties_testdata[party])
-        accuracy_ensemble.append(balanced_accuracy_score(parties_testdata[party].true_class, predicted_ensemble_classes))
+    predicted_ensemble_classes = global_model.predict(g_test)
+    accuracy_ensemble.append(balanced_accuracy_score(g_test.true_class, predicted_ensemble_classes))
 
     print("## All balanced accuracy values from global tests: %s" % str(accuracy_ensemble))
     avg_local: float = sum(accuracy_single)/len(accuracy_single)
@@ -107,3 +113,32 @@ print("# Average performance over %d rounds with local model: %.3f and global mo
 
 end = time.time()
 print("\n\tTime to go through:", end-start)
+print("Average local perfromance:", avg_local_performance)
+print("Average ensemble perfromance:", avg_ensemble_performance)
+
+
+#In [12]: avg_local_performance
+#Out[12]: 
+#[0.7760112593828191,
+# 0.7954371698637753,
+# 0.7740825688073395,
+# 0.7656727828746176,
+# 0.7622150403113706,
+# 0.7805984153461218,
+# 0.7897032249096471,
+# 0.7921705587989992,
+# 0.7955066722268557,
+# 0.7955935501807061]
+
+#In [13]: avg_ensemble_performance
+#Out[13]: 
+#[0.8154190992493745,
+# 0.8309007506255213,
+# 0.8193286071726439,
+# 0.8005629691409508,
+# 0.8593098415346121,
+# 0.8245934111759801,
+# 0.8224040867389492,
+# 0.8202147623019183,
+# 0.8365825688073394,
+# 0.8121351125938282]

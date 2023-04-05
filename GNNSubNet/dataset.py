@@ -565,10 +565,21 @@ def load_OMICS_dataset(edge_path="", feat_paths=[], survival_path="", connected=
     survival = pd.read_csv(survival_path, delimiter=' ')
     survival_values = survival.to_numpy()
 
+    # print('\t Debug edge index')
+    # print("edge_index.shape", edge_index.shape)
+    # print("edge_index:")
+    # print(type(edge_index))
+    # print(edge_index)
+    # print(edge_index.max())
+
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+    same_graph = torch.tensor(edge_index, dtype=torch.long).to(device)
+
     for idx in range(temp.shape[0]):
-        graphs.append(Data(x=torch.tensor(temp[idx]).float(),
-                        edge_index=torch.tensor(edge_index, dtype=torch.long),
-                        y=torch.tensor(survival_values[0][idx], dtype=torch.long)))
+        graphs.append(Data(x=torch.tensor(temp[idx], dtype=torch.float).to(device),
+                        edge_index=same_graph,
+                        y=torch.tensor(survival_values[0][idx], dtype=torch.long).to(device)))
         #graphs.append(Data(node_features=torch.tensor(temp[idx]).float(),
         #                edge_mat=torch.tensor(edge_index, dtype=torch.long),
         #                y=torch.tensor(survival_values[0][idx], dtype=torch.long)))
