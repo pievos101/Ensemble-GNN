@@ -13,7 +13,7 @@ from sklearn.metrics import balanced_accuracy_score
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import matthews_corrcoef
 
-RANDOM_SEED: int = 800
+RANDOM_SEED: int = 101342900
 
 
 # location of the files
@@ -62,10 +62,11 @@ model_pairs: list = egnn.split_n_fold_cv(g, n_splits=splits, random_seed=RANDOM_
 
 for g_train, g_test in model_pairs:
     counter += 1
-    pn = egnn.ensemble(g_train, niter=1, epoch_nr=35)
+    pn = egnn.ensemble(g_train, method="graphcheb", niter=1, epoch_nr=20)
     print("## Training fold %d" % counter)
     pn.train()
     #pn.grow(100)
+    #pn.train()
     predicted_local_classes = pn.predict(g_test)
     print("### Balanced accuracy: fold %d score: %.3f" % (counter, balanced_accuracy_score(g_test.true_class, predicted_local_classes)))
     print("## Finished training fold %d" % counter)
