@@ -10,7 +10,7 @@ class ensemble(object):
     The class ensemble represents the main user API for the
     Ensemble_GNN package.
     """
-    def __init__(self, gnnsubnet=None, method="graphcnn", epoch_nr: int = 50, niter: int = 1, verbose: int = 0, learning_rate=0.1) -> None:
+    def __init__(self, gnnsubnet=None, method="chebnet", epoch_nr: int = 50, niter: int = 1, verbose: int = 0, learning_rate=0.1) -> None:
 
         self.id = None
         self.ensemble  = list()
