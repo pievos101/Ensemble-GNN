@@ -25,7 +25,7 @@ with open('README.md', 'r') as readme:
 
 setup(
     name='ensemble_gnn',
-    version='1.0.2',
+    version='1.0.3',
     author='Bastian Pfeifer',
     license='MIT',
     author_email='bastian.pfeifer@medunigraz.at',
