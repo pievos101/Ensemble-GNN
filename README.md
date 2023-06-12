@@ -427,10 +427,12 @@ subnet = p1.propose()
 Logo made by Adobe Express Logo Maker: <https://www.adobe.com/express/create/logo>
 
 ## Citation
-https://academic.oup.com/bioinformatics/article/38/Supplement_2/ii120/6702000
+Ensemble-GNN: https://www.biorxiv.org/content/10.1101/2023.03.22.533772v2
+
+GNN-Subnet: https://academic.oup.com/bioinformatics/article/38/Supplement_2/ii120/6702000
 
 ### Bibtex
-```
+```BibTeX
 @article{pfeifer2022gnn,
   title={{GNN-SubNet}: Disease subnetwork detection with explainable graph neural networks},
   author={Pfeifer, Bastian and Saranti, Anna and Holzinger, Andreas},
@@ -439,7 +441,19 @@ https://academic.oup.com/bioinformatics/article/38/Supplement_2/ii120/6702000
   number={Supplement\_2},
   pages={ii120--ii126},
   year={2022},
-  publisher={Oxford University Press}
+  publisher={Oxford University Press},
+  doi = {10.1093/bioinformatics/btac478}
 }
 
+@article{pfeifer2023egnnbiorxiv,
+  title = {{Ensemble-GNN}: federated ensemble learning with graph neural networks for disease module discovery and classification},
+  author = {Bastian Pfeifer and Hryhorii Chereda and Roman Martin and Anna Saranti and Sandra Clemens and Anne-Christin Hauschild and Tim Bei{\ss}barth and Andreas Holzinger and Dominik Heider},
+  journal = {bioRxiv}
+  elocation-id = {2023.03.22.533772},
+  year = {2023},
+  doi = {10.1101/2023.03.22.533772},
+  publisher = {Cold Spring Harbor Laboratory},
+  URL = {https://www.biorxiv.org/content/early/2023/04/13/2023.03.22.533772},
+  eprint = {https://www.biorxiv.org/content/early/2023/04/13/2023.03.22.533772.full.pdf},
+}
 ```
