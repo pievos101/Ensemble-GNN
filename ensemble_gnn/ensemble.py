@@ -244,6 +244,13 @@ class ensemble(object):
 
         return dat[0].edge_index, names, acc
 
+    def get_graph(self, id=1):
+        acc = self.ensemble[id].accuracy
+        dat = copy.deepcopy(self.ensemble[id].dataset)
+        names = self.ensemble[id].gene_names
+
+        return dat[0].edge_index, names, acc
+
     #def check(self, subnet):
         # check the subnet on the data
 
@@ -439,6 +446,13 @@ class ensemble_old(object):
         ens_len = len(self.ensemble)
         # randomly select a member
         id = random.randint(0, ens_len)
+        acc = self.ensemble[id].accuracy
+        dat = copy.deepcopy(self.ensemble[id].dataset)
+        names = self.ensemble[id].gene_names
+
+        return dat[0].edge_index, names, acc
+
+    def get_graph(self, id=1):
         acc = self.ensemble[id].accuracy
         dat = copy.deepcopy(self.ensemble[id].dataset)
         names = self.ensemble[id].gene_names

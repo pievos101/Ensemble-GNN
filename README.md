@@ -71,6 +71,7 @@ e1.modules_gene_names
 
 # The first subnetwork used within the ensemble can be obtained from
 e1.ensemble[0].dataset[0].edge_index
+e1.get_graph(0)
 
 # grow the ensemble (greedy step)
 # e1.grow(10)
