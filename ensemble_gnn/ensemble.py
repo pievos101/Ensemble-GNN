@@ -249,7 +249,7 @@ class ensemble(object):
         dat = copy.deepcopy(self.ensemble[id].dataset)
         names = self.ensemble[id].gene_names
 
-        return dat[0].edge_index, names, acc
+        return dat[id].edge_index, names, acc
 
     #def check(self, subnet):
         # check the subnet on the data
