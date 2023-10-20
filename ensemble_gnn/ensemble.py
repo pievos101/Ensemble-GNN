@@ -251,9 +251,26 @@ class ensemble(object):
 
         return dat[id].edge_index, names, acc
 
+    def weightedVote(self, weights=None):
+        if weights == None:
+            weights = np.ones(len(self.predictions_test))
+
+        pred = self.predictions_test
+        weights = np.array(weights)
+        weights = weights/np.sum(weights)
+        # tweak the majority vote 
+        PRED = np.hstack(pred)
+        Pf = np.average(PRED, 1, weights)
+        Pf[Pf>.5] = 1
+        Pf[Pf<=.5] = 0
+        return(Pf)
+
     #def check(self, subnet):
         # check the subnet on the data
 
+
+#######################################################################
+#######################################################################
 
 class ensemble_old(object):
     """
