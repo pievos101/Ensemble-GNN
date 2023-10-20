@@ -169,6 +169,12 @@ class ensemble(object):
 
         self.train_accuracy = acc
 
+    def explain(self, n_runs=1):
+
+        for xx in range(len(self.ensemble)):
+            self.ensemble[xx].explain(n_runs=n_runs, communities=False)
+            
+
     def grow(self, size=10):
 
         values = np.array(self.train_accuracy)
@@ -269,6 +275,7 @@ class ensemble(object):
         # check the subnet on the data
 
 
+#######################################################################
 #######################################################################
 #######################################################################
 
