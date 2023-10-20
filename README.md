@@ -92,6 +92,8 @@ predicted_class = e1.predict(g_test)
 predicted_class
 #e1.predictions_test_mv
 
+# e1.explain()
+
 # lets check the performance of the ensemble classifier
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score
@@ -171,6 +173,8 @@ predicted_class = e1.predict(g_test)
 
 # the overall predictions based on the whole ensemble using majority vote
 predicted_class
+
+# e1.explain()
 
 # lets check the performance of the ensemble classifier
 print("\n-----------")
@@ -253,12 +257,14 @@ p1 = egnn.ensemble(partie1, niter=1)
 # train local ensemble classier of client 1
 p1.train()
 #p1.grow(10) # greedy step
+#p1.explain()
 
 # create local ensemble classier of client 2
 p2 = egnn.ensemble(partie2, niter=1)
 # train local ensemble classier of client 2
 p2.train()
 #p2.grow(10) # greedy step
+#p2.explain()
 
 # Lets check the client-specific performances
 from sklearn.metrics import balanced_accuracy_score
@@ -351,6 +357,7 @@ for party in egnn.split_n(g, parties):
     pn = egnn.ensemble(party, niter=1)
     pn.train()
     #pn.grow(10)
+    #pn.explain()
     learned_ensembles.append(pn)
 
 # Aggregate all trained ensemble models
