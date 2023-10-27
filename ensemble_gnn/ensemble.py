@@ -263,11 +263,12 @@ class ensemble(object):
 
         pred = self.predictions_test
         weights = np.array(weights)
-        weights = weights/np.sum(weights)
+        weights = weights#/np.sum(weights)
         # tweak the majority vote 
         PRED = np.hstack(pred)
-        Pf = np.average(PRED, 1, weights)
-        Pf[Pf>.5] = 1
+        PRED = np.repeat(PRED, weights, axis=1)
+        Pf = np.average(PRED, 1)
+        Pf[Pf>.5]  = 1
         Pf[Pf<=.5] = 0
         return(Pf)
 
