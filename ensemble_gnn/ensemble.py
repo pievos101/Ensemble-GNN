@@ -255,7 +255,7 @@ class ensemble(object):
         dat = copy.deepcopy(self.ensemble[id].dataset)
         names = self.ensemble[id].gene_names
 
-        return dat[id].edge_index, names, acc
+        return dat[0].edge_index, names, acc
 
     def weightedVote(self, weights=None):
         if weights == None:
